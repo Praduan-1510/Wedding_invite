@@ -1,0 +1,70 @@
+/* Photographs laid out like keepsakes on a table rather than slides in a
+   widget: white border, soft shadow, each tilted a degree or two — and the
+   two either side of the current one left showing, so it reads as a pile
+   being gone through rather than a single image swapping itself out. */
+
+.stage{
+  position:relative;display:grid;place-items:center;
+  margin:0 auto clamp(1.6rem,4vw,2.4rem);
+}
+
+/* the dark panel is otherwise flat behind the photographs; this is the
+   pool of warm light they are lying in */
+.pool{
+  position:absolute;width:150%;height:128%;pointer-events:none;
+  background:radial-gradient(48% 46% at 50% 50%,rgba(201,179,126,.17),rgba(201,179,126,.05) 55%,rgba(201,179,126,0) 76%);
+}
+
+.deck{
+  position:relative;width:min(80vw,25rem);aspect-ratio:4/5;
+  touch-action:pan-y;
+}
+
+.slide{
+  position:absolute;inset:0;margin:0;opacity:0;
+  background:#fff;
+  padding:clamp(.5rem,1.6vw,.8rem) clamp(.5rem,1.6vw,.8rem) clamp(1.8rem,4.6vw,2.7rem);
+  box-shadow:0 1px 2px rgba(0,0,0,.16),0 18px 40px -12px rgba(0,0,0,.55);
+  transform:rotate(var(--r)) scale(.86);
+  transition:opacity .9s var(--ease),transform 1.1s var(--ease),filter 1.1s var(--ease);
+  will-change:opacity,transform;
+}
+
+/* the rest of the pile, fanned either side and falling back into the dark */
+.prev,.next{opacity:.62;z-index:2;filter:brightness(.72) contrast(.97)}
+.prev{transform:rotate(calc(var(--r) - 8deg)) translateX(-17%) scale(.88)}
+.next{transform:rotate(calc(var(--r) + 8deg)) translateX(17%) scale(.88)}
+
+.prev2,.next2{opacity:.26;z-index:1;filter:brightness(.5) contrast(.94)}
+.prev2{transform:rotate(calc(var(--r) - 14deg)) translateX(-29%) scale(.79)}
+.next2{transform:rotate(calc(var(--r) + 14deg)) translateX(29%) scale(.79)}
+
+.on{
+  opacity:1;transform:rotate(var(--r)) scale(1);z-index:3;filter:none;
+  box-shadow:0 2px 4px rgba(0,0,0,.22),0 30px 62px -18px rgba(0,0,0,.72);
+}
+
+.shot{position:relative;width:100%;height:100%;overflow:hidden;background:center/cover no-repeat}
+.shot img{width:100%;height:100%;object-fit:cover;transform:scale(1.004);transition:transform 8s linear}
+.on .shot img{transform:scale(1.07)}
+
+.nav{display:flex;align-items:center;justify-content:center;gap:clamp(.6rem,2.2vw,1.2rem)}
+.arrow{
+  width:44px;height:44px;display:grid;place-items:center;flex:none;
+  background:none;border:0;cursor:pointer;color:rgba(243,238,229,.6);
+  transition:color .3s,transform .3s var(--ease);
+}
+.arrow:hover,.arrow:focus-visible{color:var(--cream);transform:scale(1.16)}
+.arrow svg{width:15px;height:15px}
+
+.dots{display:flex;gap:.3rem;align-items:center}
+.dot{width:20px;height:22px;padding:0;border:0;background:none;cursor:pointer;display:grid;place-items:center}
+.dot::before{
+  content:'';width:5px;height:5px;border-radius:50%;
+  border:1px solid rgba(243,238,229,.45);transition:all .4s var(--ease);
+}
+.current::before{background:var(--gold);border-color:var(--gold);transform:scale(1.5)}
+
+@media (prefers-reduced-motion:reduce){
+  .on .shot img{transform:none}
+}

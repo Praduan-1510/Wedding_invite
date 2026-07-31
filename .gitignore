@@ -1,0 +1,13 @@
+node_modules
+.next
+out
+.DS_Store
+.vercel
+*.tsbuildinfo
+next-env.d.ts
+
+# Asset masters — photo originals, the audio master and the licensed stock
+# artwork. The site builds from public/ alone, so none of this is needed to
+# deploy, and this repo is public. Kept locally; see source/README.md for the
+# master -> cut map if these ever need regenerating.
+source/

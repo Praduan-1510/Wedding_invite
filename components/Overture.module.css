@@ -1,0 +1,144 @@
+/* The card, sealed. Two leaves of one sheet with a gold fold between them;
+   pressing the seal parts them and the invitation is behind. */
+
+.cover{
+  position:fixed;inset:0;z-index:20;
+  display:none;                       /* only ever shown when scripting is live */
+  place-items:center;
+  cursor:pointer;text-align:center;
+}
+:global(html.js) .cover{display:grid}
+/* must out-specify the rule above, or the lifted cover is never taken away */
+:global(html.js) .cover.done{display:none}
+
+/* ── the two leaves ─────────────────────────────────────────────
+   Each is half the width and holds a full-viewport copy of the
+   painting pinned to its own edge, so across the fold the artwork
+   is continuous — until it isn't. */
+.leaf{
+  position:absolute;top:0;bottom:0;width:50.2%;overflow:hidden;
+  background:var(--paper);
+  transition:transform 1.25s var(--ease);
+  will-change:transform;
+}
+.l{left:0;border-right:1px solid rgba(201,179,126,.4)}
+.r{right:0}
+
+/* each leaf keeps the painting's own outer edge, where all the flowers are.
+   The blank middle of the artwork is simply skipped, so a phone gets blooms
+   down both sides instead of a stretched empty centre. */
+.leaf img{
+  position:absolute;inset:0;width:100%;height:100%;max-width:none;
+  object-fit:cover;
+  opacity:.52;mix-blend-mode:multiply;
+}
+.l img{object-position:left center}
+.r img{object-position:right center}
+
+/* the paper rises toward the fold, so the flowers stay rich at the
+   outer edges and the type always has a clean bed to sit on */
+.leaf::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(to right,rgba(253,252,249,.34),rgba(253,252,249,.93) 78%);
+}
+.r::after{background:linear-gradient(to left,rgba(253,252,249,.34),rgba(253,252,249,.93) 78%)}
+
+/* nothing under a lifted cover should have to wait for the animation to
+   finish before it can be clicked */
+.lifted{pointer-events:none}
+.lifted .l{transform:translateX(-101%)}
+.lifted .r{transform:translateX(101%)}
+
+/* ── what is printed on the front ───────────────────────────── */
+.inner{
+  position:relative;z-index:1;
+  display:flex;flex-direction:column;align-items:center;
+  padding:var(--gutter);
+  transition:opacity .5s var(--ease),transform .7s var(--ease);
+}
+.lifted .inner{opacity:0;transform:translateY(-8px)}
+
+.eyebrow{
+  font-family:var(--serif);font-weight:400;color:var(--grey);
+  font-size:clamp(.68rem,.58rem + .45vw,.92rem);
+  letter-spacing:.3em;text-transform:uppercase;line-height:1.6;
+  margin:0 0 clamp(1.4rem,3.4vw,2.2rem);
+  /* ch is far too tight for tracked-out caps — it wrapped a 31-character
+     line into three on a 2000px screen */
+  max-width:min(32rem,100%);
+}
+
+/* smaller than the hero's, so the reveal still arrives bigger */
+.names{margin:0}
+.name{
+  display:block;font-family:var(--serif);font-weight:300;color:var(--ink);
+  font-size:clamp(2.05rem,8.4vw,3.7rem);
+  line-height:1.02;letter-spacing:.05em;text-transform:uppercase;
+}
+.amp{
+  display:block;font-family:var(--script);color:var(--gold);
+  font-size:clamp(1.35rem,4.4vw,2.1rem);line-height:1;
+  margin:clamp(.15rem,.7vw,.4rem) 0;transform:rotate(-2deg);
+}
+
+.rule{
+  display:block;width:1px;height:clamp(1.5rem,3.6vw,2.2rem);
+  background:linear-gradient(var(--gold),transparent);
+  margin:clamp(1.3rem,3vw,1.9rem) 0 clamp(.9rem,2.2vw,1.3rem);
+}
+.date{
+  margin:0;font-family:var(--serif);font-weight:500;color:#616161;
+  font-size:clamp(1rem,.9rem + .55vw,1.35rem);letter-spacing:.14em;
+}
+
+/* ── the seal ───────────────────────────────────────────────── */
+.seal{
+  position:relative;
+  margin:clamp(2rem,5vw,3rem) 0 clamp(.9rem,2.2vw,1.2rem);
+  width:clamp(3.9rem,11vw,5.2rem);aspect-ratio:1;border-radius:50%;border:0;padding:0;
+  display:grid;place-items:center;cursor:pointer;
+  background:radial-gradient(118% 118% at 34% 26%,#E8D8AE,#C9B37E 48%,#A28349 100%);
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,.55),
+    inset 0 -2px 3px rgba(120,95,45,.4),
+    0 1px 2px rgba(60,48,24,.22),
+    0 14px 26px -10px rgba(120,100,60,.6);
+  transition:transform .5s var(--ease),box-shadow .5s var(--ease);
+}
+/* the invitation to press is a ring leaving the seal, not the seal itself
+   moving — a target that never stops shifting is a target you have to chase */
+.seal::after{
+  content:'';position:absolute;inset:-5px;border-radius:50%;pointer-events:none;
+  border:1px solid var(--gold);
+  animation:halo 3.6s cubic-bezier(.19,1,.22,1) infinite;
+}
+@keyframes halo{
+  0%{transform:scale(.98);opacity:.6}
+  65%{transform:scale(1.26);opacity:0}
+  100%{transform:scale(1.26);opacity:0}
+}
+.seal img{
+  width:52%;height:auto;
+  filter:brightness(0) invert(1) drop-shadow(0 1px 0 rgba(110,88,40,.65));
+  opacity:.92;
+}
+.cover:hover .seal{transform:scale(1.07);box-shadow:
+  inset 0 1px 1px rgba(255,255,255,.6),
+  inset 0 -2px 3px rgba(120,95,45,.35),
+  0 2px 3px rgba(60,48,24,.2),
+  0 20px 34px -10px rgba(120,100,60,.7)}
+.seal:focus-visible{outline:2px solid var(--gold);outline-offset:6px}
+/* pressed: it sinks back into the paper as the leaves go */
+.lifted .seal{transform:scale(.9)}
+.lifted .seal::after{animation:none;opacity:0}
+
+.go{
+  font-family:var(--serif);text-transform:uppercase;letter-spacing:.3em;
+  font-size:clamp(.6rem,.55rem + .2vw,.72rem);color:var(--grey);
+  padding-left:.3em;
+}
+
+@media (prefers-reduced-motion:reduce){
+  .seal{animation:none}
+  .leaf,.inner{transition-duration:.001ms}
+}

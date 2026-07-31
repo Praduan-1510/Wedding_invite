@@ -1,0 +1,79 @@
+/* An old CD, resting and turning. The disc spins; the sheen and the hub do not,
+   so the highlight sits still on a moving surface the way real light does. */
+
+.wrap{
+  margin-top:clamp(2rem,5vw,3.2rem);
+  display:flex;flex-direction:column;align-items:center;gap:1.1rem;
+}
+
+.button{
+  position:relative;display:block;padding:0;border:0;background:none;cursor:pointer;
+  width:clamp(9.5rem,34vw,13.5rem);aspect-ratio:1;border-radius:50%;
+  transition:transform .6s cubic-bezier(.19,1,.22,1),filter .6s;
+  filter:saturate(.72);
+}
+.button:hover,.button:focus-visible{transform:scale(1.035);filter:saturate(.95)}
+.playing.button{filter:saturate(1)}
+
+.disc{
+  position:absolute;inset:0;border-radius:50%;
+  background:
+    /* fine data grooves */
+    repeating-radial-gradient(circle at 50% 50%,
+      rgba(255,255,255,.30) 0 1px, rgba(17,17,17,.055) 1px 3px),
+    /* the clear inner band every CD has */
+    radial-gradient(circle at 50% 50%,
+      transparent 0 25%, rgba(238,233,224,.92) 25% 33%, transparent 33%),
+    /* iridescence, pulled toward the page palette rather than full rainbow */
+    conic-gradient(from 200deg,
+      #EFE3D2, #C9B37E, #BFD0C6, #EDE7DC, #ECA4A6, #D8C79E, #A8BCAF, #E6D9C6, #EFE3D2);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.55),
+    inset 0 0 22px rgba(17,17,17,.10),
+    0 14px 30px -12px rgba(17,17,17,.45);
+  animation:spin 3.4s linear infinite;
+  animation-play-state:paused;
+  will-change:transform;
+}
+.playing .disc{animation-play-state:running}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* static specular highlight */
+.sheen{
+  position:absolute;inset:0;border-radius:50%;pointer-events:none;
+  background:linear-gradient(118deg,
+    rgba(255,255,255,.62) 0 15%, rgba(255,255,255,.06) 33% 62%,
+    rgba(255,255,255,.42) 84% 100%);
+  mix-blend-mode:overlay;
+}
+
+/* label + control, held still so the glyph stays readable */
+.hub{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:37%;aspect-ratio:1;border-radius:50%;
+  background:var(--paper);
+  border:1px solid rgba(201,179,126,.75);
+  box-shadow:0 0 0 5px rgba(253,252,249,.5),0 2px 8px rgba(17,17,17,.14);
+  display:grid;place-items:center;color:var(--ink);
+}
+.hub svg{width:34%;height:auto;fill:currentColor}
+.pause{display:none}
+.playing .play{display:none}
+.playing .pause{display:block}
+
+.track{
+  font-family:var(--serif);text-transform:uppercase;letter-spacing:.24em;
+  font-size:clamp(.6rem,.55rem + .18vw,.72rem);color:rgba(243,238,229,.66);
+  text-align:center;margin:0;
+}
+
+/* a quiet line of feedback while the browser is still withholding permission */
+.hint{
+  font-family:var(--book);font-style:italic;color:rgba(243,238,229,.7);
+  font-size:.78rem;margin:0;opacity:.6;
+}
+
+@media (prefers-reduced-motion:reduce){
+  .disc{animation:none}
+  .button{transition:none}
+}
