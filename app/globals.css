@@ -293,8 +293,8 @@ img{max-width:100%;display:block;height:auto}
 
 /* the light those lanterns throw down on the step, which the type stands in */
 .spill{
-  position:absolute;left:50%;bottom:-3%;transform:translateX(-50%);
-  width:134%;height:44%;pointer-events:none;z-index:1;
+  position:absolute;left:50%;bottom:-13%;transform:translateX(-50%);
+  width:134%;height:56%;pointer-events:none;z-index:1;
   background:
     radial-gradient(36% 50% at 50% 46%,rgba(224,190,120,.46),rgba(224,190,120,0) 72%),
     radial-gradient(70% 96% at 50% 48%,rgba(201,179,126,.18),rgba(201,179,126,0) 78%);
@@ -311,9 +311,12 @@ img{max-width:100%;display:block;height:auto}
 }
 /* the details rise into the glow rather than sitting under the picture —
    the negative margin is what makes it one image instead of two stacked */
+/* the type clears the drawing rather than crowding its foot. The spill
+   below is stretched to follow it down, so the name still sits in the
+   lantern light even with the gap opened up. */
 .details{
   position:relative;z-index:3;text-align:center;
-  margin-top:calc(var(--dw) * -0.06);
+  margin-top:clamp(2rem,5vw,3.5rem);
 }
 /* the name is the largest thing in the section now that it is out of the
    dark — it breaks to two lines on its own, which is why it is measured
@@ -362,7 +365,7 @@ img{max-width:100%;display:block;height:auto}
    fine enough that shrinking it any further turns the fanlight to mush */
 @media (max-width:860px){
   #threshold{--dw:min(88vw,22rem)}
-  .details{margin-top:calc(var(--dw) * -0.05)}
+  .details{margin-top:clamp(1.5rem,6vw,2.5rem)}
 }
 
 /* ── the cover, before it is lifted ─────────────────────────────
