@@ -49,6 +49,15 @@ export default function Usher() {
     const maxScroll = () =>
       Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
 
+    /** near enough all of it is already on the screen — the countdown and the
+     *  date are this to each other on a phone, two short acts inside one
+     *  viewport. On a wider screen the same acts are tall enough never to be. */
+    const mostlyShown = (el: HTMLElement) => {
+      const r = el.getBoundingClientRect();
+      const shown = Math.min(r.bottom, window.innerHeight) - Math.max(r.top, 0);
+      return shown / r.height >= 0.85;
+    };
+
     /** where an act should come to rest: one taller than the screen is walked
      *  from its top edge, a short one is centred so its heading never ends up
      *  jammed under the notch */
@@ -101,11 +110,25 @@ export default function Usher() {
       if (stopped) return;
       step += 1;
       if (step > STOPS.length) return finish();
-      // the coda — settle on the signature, so the tour ends on the monogram
-      if (step === STOPS.length) return glide(maxScroll(), finish);
+
+      /* the coda — settle on the signature, so the tour ends on the monogram.
+         Unless the last act already all but reached it: a 30px shuffle after a
+         five-second rest reads as a twitch, not as being shown something. */
+      if (step === STOPS.length) {
+        const left = maxScroll() - window.scrollY;
+        return left < window.innerHeight * 0.08 ? finish() : glide(maxScroll(), finish);
+      }
 
       const el = document.getElementById(STOPS[step].id);
       if (!el) return advance();
+
+      /* already on the screen — moving would show the same view twice, so the
+         tour stays where it is and spends this act's time here instead */
+      if (mostlyShown(el)) {
+        dwellT = setTimeout(advance, STOPS[step].dwell);
+        return;
+      }
+
       glide(restFor(el), () => {
         dwellT = setTimeout(advance, STOPS[step].dwell);
       });
@@ -136,9 +159,13 @@ export default function Usher() {
          yanked back up to an act you deliberately scrolled past is the
          rudest thing this could do */
       const y = window.scrollY;
+      /* the first act that is both below them and not already on their screen.
+         Skipping the ones they can see is what makes picking up again read as
+         picking up again — resuming into a stop that needs no movement looks
+         from the sofa exactly like never resuming at all. */
       let next = STOPS.findIndex((s) => {
         const el = document.getElementById(s.id);
-        return !!el && restFor(el) > y + 8;
+        return !!el && restFor(el) > y + 8 && !mostlyShown(el);
       });
       if (next === -1) next = maxScroll() > y + 8 ? STOPS.length : -1;
       if (next === -1) return finish();   // they are already at the end
