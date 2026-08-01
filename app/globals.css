@@ -7,8 +7,17 @@
   /* from V4 - Kolkata.png */
   --paper:#FDFCF9;
   --ink:#141414;
-  --grey:#7C7C7C;
+  /* Secondary type is ink on ivory, not grey on white. #7C7C7C was a cold
+     neutral sitting outside the palette at 4.07:1 — under the 4.5:1 floor,
+     which is why the eyebrows, the verse and the address kept being reported
+     as too faint. A warm umber reads just as soft and lands at 6.95:1. */
+  --grey:#5C574E;
+  /* --gold is a *metallic*: right for hairlines, rules, borders and the date
+     on the dark panel, where it has something to glint against. As text on
+     ivory it is 2:1 and practically invisible. --gold-ink is the same colour
+     as ink rather than foil — antique ochre, 5.68:1, still unmistakably gold. */
   --gold:#C9B37E;
+  --gold-ink:#7D6229;
   /* from the watercolour */
   --sage:#A8BCAF;
   --deep:#1D2A23;        /* the panel colour, its darkest leaf */
@@ -192,8 +201,9 @@ img{max-width:100%;display:block;height:auto}
   font-size:clamp(2.9rem,14vw,7rem);
   line-height:.94;letter-spacing:.045em;text-transform:uppercase;margin:0;color:var(--ink);
 }
+/* on ivory, so it takes the ink gold — as foil gold it measured 2:1 */
 .amp{
-  font-family:var(--script);color:var(--gold);display:block;
+  font-family:var(--script);color:var(--gold-ink);display:block;
   font-size:clamp(1.9rem,6.4vw,3.5rem);line-height:1;
   margin:clamp(.1rem,.5vw,.35rem) 0;transform:rotate(-2deg);
 }
@@ -221,12 +231,15 @@ img{max-width:100%;display:block;height:auto}
 }
 .num.tick{animation:roll .24s var(--ease)}
 @keyframes roll{from{transform:translateY(-.3em);opacity:.15}to{transform:none;opacity:1}}
+/* these were resolving to 8.8px of tracked-out capitals on a phone — the
+   smallest type on the page, and it was carrying the low-contrast grey too */
 .unit small{
   font-family:var(--serif);text-transform:uppercase;color:var(--grey);
-  font-size:clamp(.54rem,.48rem + .3vw,.74rem);letter-spacing:.24em;
+  font-size:clamp(.68rem,.58rem + .34vw,.8rem);letter-spacing:.2em;
 }
+/* over the artwork, so ink gold rather than foil */
 .sep{
-  font-family:var(--serif);font-weight:300;color:var(--gold);
+  font-family:var(--serif);font-weight:300;color:var(--gold-ink);
   font-size:clamp(1.5rem,6.5vw,3.2rem);line-height:1.12;user-select:none;
 }
 
@@ -377,7 +390,7 @@ img{max-width:100%;display:block;height:auto}
   transition:transform .55s var(--ease);
 }
 .maps svg{width:1.6rem;height:.75rem;overflow:visible;transition:transform .55s var(--ease)}
-.maps:hover,.maps:focus-visible{color:var(--gold)}
+.maps:hover,.maps:focus-visible{color:var(--gold-ink)}
 .maps:hover svg,.maps:focus-visible svg{transform:translateX(.35rem)}
 
 /* on a phone the drawing takes nearly the full measure — the linework is
