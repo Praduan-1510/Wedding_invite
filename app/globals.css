@@ -50,8 +50,12 @@ img{max-width:100%;display:block;height:auto}
   background:linear-gradient(rgba(253,252,249,.55),rgba(253,252,249,.72));
 }
 
+/* No mix-blend-mode here. A full-viewport blended layer forces the browser to
+   re-composite the entire screen every frame anything beneath it moves — and
+   something always is — which was costing more than the whole rest of the page.
+   At 4.5% opacity multiply and normal are visually indistinguishable. */
 .grain{
-  position:fixed;inset:0;z-index:9;pointer-events:none;opacity:.045;mix-blend-mode:multiply;
+  position:fixed;inset:0;z-index:9;pointer-events:none;opacity:.045;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
@@ -61,8 +65,11 @@ img{max-width:100%;display:block;height:auto}
 
 /* art — lets the fixed artwork through, only a whisper of paper over it */
 .art{background:linear-gradient(rgba(253,252,249,.34),rgba(253,252,249,.34))}
-/* paper — an opaque card laid on the artwork */
-.paper{background:rgba(253,252,249,.93);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}
+/* paper — an opaque card laid on the artwork. No backdrop-filter: at 93%
+   opacity over an already-soft watercolour the 2px blur was invisible, but it
+   made the browser re-blur a full-height panel on every scrolled frame — and
+   the backdrop beneath it animates, so the result could never be cached. */
+.paper{background:rgba(253,252,249,.93)}
 /* deep — the solid colour panel, this page's answer to the video's red */
 .deep{background:var(--deep);color:var(--cream)}
 .deep .eyebrow,.deep .verse{color:rgba(243,238,229,.72)}
@@ -99,6 +106,18 @@ img{max-width:100%;display:block;height:auto}
   .deep .spray.tl{width:58%}
   .deep .spray.br{width:62%}
 }
+
+/* ── off-screen sections stop animating ─────────────────────────────
+   RevealRoot marks the sections currently in view. Everything decorative
+   and infinite is parked in the rest, so a visitor reading the venue is
+   not also paying for thirteen orbs drifting three screens above them. */
+.js .act:not(.vis) .orb,
+.js .act:not(.vis) .orb::before,
+.js .act:not(.vis) .fleck,
+.js .act:not(.vis) .garland,
+.js .act:not(.vis) .sprig,
+.js .act:not(.vis) .spray,
+.js .act:not(.vis) .lamp{animation-play-state:paused}
 
 /* hairline seams so panels meet like folded card, not stacked divs */
 .paper,.deep,.art{border-top:1px solid rgba(201,179,126,.28)}
@@ -415,17 +434,20 @@ html.js:not(.opened) .cue .rule{animation-play-state:paused}
    blurred gradient only reads as a smudge, which is what this was.
    Drift sits on the element, glow on ::before — both want `transform`,
    so sharing one element would let only the last animation win.        */
+/* No will-change on either half. These are 2-8px elements, and hinting 13 of
+   them plus 13 pseudo-elements meant 26 permanently promoted compositor
+   layers — more GPU memory and per-frame bookkeeping than the promotion ever
+   saved. Browsers promote an animating transform/opacity on their own, for
+   exactly as long as it runs. */
 .orb{
   position:absolute;pointer-events:none;z-index:1;
   transform:translate(-50%,-50%);
   animation-name:orbDrift;animation-timing-function:ease-in-out;
   animation-iteration-count:infinite;animation-direction:alternate;
-  will-change:transform;
 }
 .orb::before{
   content:'';display:block;width:100%;height:100%;border-radius:50%;
   animation:orbGlow var(--g,4s) ease-in-out var(--gd,0s) infinite alternate;
-  will-change:opacity,transform;
 }
 .orb-gold::before{
   background:rgba(248,240,216,.95);

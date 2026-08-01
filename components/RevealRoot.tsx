@@ -23,7 +23,23 @@ export default function RevealRoot() {
     // the hero arrives immediately — never gated on a scroll
     document.querySelectorAll('#door [data-r]').forEach((el) => el.classList.add('in'));
 
-    return () => io.disconnect();
+    /**
+     * Decorative loops — orbs, flecks, garlands, sprays — are infinite, so
+     * without this they keep the compositor busy for the whole visit even
+     * while their section is nowhere near the viewport. This marks which
+     * sections are actually on screen; the CSS pauses the rest. Unlike the
+     * reveal above, these are never unobserved: a section has to be able to
+     * go back to sleep once it scrolls away again.
+     */
+    const seen = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) e.target.classList.toggle('vis', e.isIntersecting);
+      },
+      { rootMargin: '20% 0px' },   // wake just before it comes into view
+    );
+    document.querySelectorAll('.act').forEach((s) => seen.observe(s));
+
+    return () => { io.disconnect(); seen.disconnect(); };
   }, []);
 
   return null;
