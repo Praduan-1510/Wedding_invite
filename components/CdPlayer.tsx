@@ -9,6 +9,7 @@ export default function CdPlayer() {
   const audioRef = useRef<HTMLAudioElement>(null);
   const pausedByUser = useRef(false);
   const fadeRef = useRef<number | null>(null);
+  const landRef = useRef<number | null>(null);
   const [playing, setPlaying] = useState(false);
   const [waiting, setWaiting] = useState(false);
 
@@ -16,6 +17,7 @@ export default function CdPlayer() {
     const a = audioRef.current;
     if (!a) return;
     if (fadeRef.current) cancelAnimationFrame(fadeRef.current);
+    if (landRef.current) clearTimeout(landRef.current);
     const from = a.volume;
     const t0 = performance.now();
     const step = (t: number) => {
@@ -28,6 +30,14 @@ export default function CdPlayer() {
       else if (to === 0) a.pause();
     };
     fadeRef.current = requestAnimationFrame(step);
+    // rAF stops entirely in a backgrounded tab, and this fade starts from
+    // volume 0 — so a visitor who opens the card and immediately switches
+    // apps can come back to a track that is playing but permanently silent.
+    // Land it on the target no matter what happened to the animation frames.
+    landRef.current = window.setTimeout(() => {
+      a.volume = Math.min(1, Math.max(0, to));
+      if (to === 0) a.pause();
+    }, ms + 300);
   }, []);
 
   /**
@@ -43,26 +53,40 @@ export default function CdPlayer() {
     a.volume = 0;
     let dead = false;
     let silent = false; // running, but muted and inaudible
+    let won = false;    // audible playback has succeeded — never mute again
 
-    const events = ['pointerdown', 'touchstart', 'keydown'] as const;
+    // `click` as well as `pointerdown`: a button reached through assistive
+    // technology, or activated programmatically, raises click on its own.
+    const events = ['pointerdown', 'touchstart', 'keydown', 'click'] as const;
     const detach = () => events.forEach((e) => window.removeEventListener(e, attempt));
 
     async function attempt() {
-      if (dead || pausedByUser.current || !a) return;
+      if (dead || won || pausedByUser.current || !a) return;
       try {
         a.muted = false;
         if (silent) { a.currentTime = 0; silent = false; }
         await a.play();
+        if (dead) return;
+        won = true;            // claimed before anything async can undo it
         setPlaying(true);
         setWaiting(false);
         fade(volume, 1600);
         detach();
       } catch {
-        // audible playback refused — keep it turning over quietly instead
+        /* The attempt fired at mount has no gesture behind it and is *meant*
+           to fail. But its rejection is async, so it can land after a later,
+           gesture-driven attempt has already started playing audibly — and
+           muting here then silences the track the visitor just opened. That
+           is the "the card opens but stays quiet" report: the audio is not
+           stopped, it is running muted, which is why nothing looks wrong. */
+        if (dead || won) return;
         setWaiting(true);
         if (!silent) {
           a.muted = true;
-          a.play().then(() => { silent = true; }).catch(() => {});
+          a.play().then(() => {
+            // and the same race once more, one level down
+            if (won) a.muted = false; else silent = true;
+          }).catch(() => {});
         }
       }
     }
@@ -74,6 +98,7 @@ export default function CdPlayer() {
       dead = true;
       detach();
       if (fadeRef.current) cancelAnimationFrame(fadeRef.current);
+      if (landRef.current) clearTimeout(landRef.current);
     };
   }, [fade]);
 
