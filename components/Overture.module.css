@@ -56,16 +56,27 @@
   padding:var(--gutter);
   transition:opacity .5s var(--ease),transform .7s var(--ease);
 }
+/* A bed for the type. The leaves already lift the paper toward the fold, but
+   the printed block is wider than the fold, so its ends ran out over the
+   heaviest flowers — which is where the eyebrow was disappearing on a phone.
+   This is the same paper tone, gathered under the words and fading out well
+   before any edge, so it never reads as a panel laid on the painting. */
+.inner::before{
+  content:'';position:absolute;z-index:-1;inset:-6% -14%;pointer-events:none;
+  background:radial-gradient(62% 48% at 50% 50%,
+    rgba(253,252,249,.94), rgba(253,252,249,.78) 52%, rgba(253,252,249,0) 79%);
+}
 .lifted .inner{opacity:0;transform:translateY(-8px)}
 
 .eyebrow{
-  font-family:var(--serif);font-weight:400;color:var(--grey);
-  font-size:clamp(.68rem,.58rem + .45vw,.92rem);
-  letter-spacing:.3em;text-transform:uppercase;line-height:1.6;
+  font-family:var(--serif);font-weight:400;color:#57534B;
+  font-size:clamp(.8rem,.62rem + .6vw,.95rem);
+  letter-spacing:.28em;text-transform:uppercase;line-height:1.7;
   margin:0 0 clamp(1.4rem,3.4vw,2.2rem);
   /* ch is far too tight for tracked-out caps — it wrapped a 31-character
      line into three on a 2000px screen */
   max-width:min(32rem,100%);
+  text-wrap:balance;
 }
 
 /* smaller than the hero's, so the reveal still arrives bigger */
@@ -87,15 +98,18 @@
   margin:clamp(1.3rem,3vw,1.9rem) 0 clamp(.9rem,2.2vw,1.3rem);
 }
 .date{
-  margin:0;font-family:var(--serif);font-weight:500;color:#616161;
-  font-size:clamp(1rem,.9rem + .55vw,1.35rem);letter-spacing:.14em;
+  margin:0;font-family:var(--serif);font-weight:500;color:#4E4A43;
+  font-size:clamp(1.12rem,.95rem + .7vw,1.4rem);letter-spacing:.15em;
 }
 
 /* ── the seal ───────────────────────────────────────────────── */
 .seal{
   position:relative;
-  margin:clamp(2rem,5vw,3rem) 0 clamp(.9rem,2.2vw,1.2rem);
-  width:clamp(3.9rem,11vw,5.2rem);aspect-ratio:1;border-radius:50%;border:0;padding:0;
+  margin:clamp(2rem,5vw,3rem) 0 clamp(1rem,2.4vw,1.35rem);
+  /* the phone end of the range is what moved: 11vw resolved to well under the
+     floor, so a 390px screen got the 3.9rem minimum and the seal read as a
+     token rather than something to press */
+  width:clamp(5.4rem,17vw,6.4rem);aspect-ratio:1;border-radius:50%;border:0;padding:0;
   display:grid;place-items:center;cursor:pointer;
   background:radial-gradient(118% 118% at 34% 26%,#E8D8AE,#C9B37E 48%,#A28349 100%);
   box-shadow:
@@ -132,10 +146,20 @@
 .lifted .seal{transform:scale(.9)}
 .lifted .seal::after{animation:none;opacity:0}
 
+/* it was ~9.6px of tracked-out caps in light grey — the least legible thing
+   on the screen, and the one word that has to be read */
 .go{
-  font-family:var(--serif);text-transform:uppercase;letter-spacing:.3em;
-  font-size:clamp(.6rem,.55rem + .2vw,.72rem);color:var(--grey);
-  padding-left:.3em;
+  font-family:var(--serif);text-transform:uppercase;letter-spacing:.32em;
+  font-size:clamp(.78rem,.68rem + .35vw,.88rem);color:#57534B;
+  padding-left:.32em;
+}
+
+/* On a phone the eyebrow ran the full measure and its two ends landed out on
+   the flowers, where the paper wash is thinnest. Narrowing it breaks the line
+   into two centred rows that stay over the calm middle of the bed — and it
+   sits better under the names than one long thin rule of capitals. */
+@media (max-width:520px){
+  .eyebrow{max-width:15.5rem;letter-spacing:.24em;line-height:1.85}
 }
 
 @media (prefers-reduced-motion:reduce){
