@@ -48,7 +48,11 @@ export default function Overture() {
     document.documentElement.classList.add('opened'); // frees scrolling, releases the hero
     document.querySelector('main')?.removeAttribute('inert');
     const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    setTimeout(() => setDone(true), still ? 60 : 1600);
+    setTimeout(() => {
+      setDone(true);
+      // the cover is out of the way — Usher may start showing them around
+      window.dispatchEvent(new Event('invite:opened'));
+    }, still ? 60 : 1600);
   };
 
   return (

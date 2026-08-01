@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Cormorant, EB_Garamond, Pinyon_Script } from 'next/font/google';
 import Overture from '@/components/Overture';
 import RevealRoot from '@/components/RevealRoot';
+import Usher from '@/components/Usher';
 import './globals.css';
 
 const serif = Cormorant({
@@ -65,6 +66,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Overture />
         <main>{children}</main>
         <RevealRoot />
+        <Usher />
       </body>
     </html>
   );
