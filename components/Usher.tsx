@@ -2,212 +2,144 @@
 import { useEffect } from 'react';
 
 /**
- * The tour of the page, once the card is open — it walks a guest from act to
- * act and rests on each one, the way someone would be shown around a room.
+ * The page reads itself, once the card is open — one unbroken drift from the
+ * names down to the signature, slow enough to read along with.
  *
  * It is a guest, not the host. Anything the visitor does — a wheel, a finger,
- * a key, a drag of the scrollbar — takes the page away from it mid-glide. It
- * lets go, waits for them to be still, and picks up from wherever they now
- * are rather than from where it had got to. Do that to it three times and it
- * stops offering: someone who keeps taking the wheel wants to drive.
+ * a key, a drag of the scrollbar — stops it where it stands. It waits for them
+ * to be still, then takes up again from wherever they have left it.
  */
 
-/** the acts in order, and how long to rest once each has arrived. The reveals
- *  are staggered `--i * 95ms` on top of a 1s transition, so the longest act
- *  finishes assembling ~1.6s after it comes into view — every dwell here is
- *  that plus enough stillness to actually read the thing. */
-const STOPS = [
-  { id: 'door', dwell: 4200 },        // already revealed behind the cover
-  { id: 'procession', dwell: 6200 },  // photographs are worth lingering on
-  { id: 'altar', dwell: 4600 },
-  { id: 'light', dwell: 4600 },
-  { id: 'threshold', dwell: 5200 },
-];
-
-const IDLE = 8000;   // stillness before the tour offers to carry on
-const GIVE_UP = 3;   // takeovers after which it stops offering for good
-
-/** cubic-out — the page's own `--ease` settles the same way */
-const ease = (t: number) => 1 - Math.pow(1 - t, 3);
+/** One screen every 36 seconds. Expressed in viewports rather than pixels so
+ *  the pace *looks* the same everywhere: a fixed px/sec that reads as a slow
+ *  drift on a phone is a crawl on a desktop, where the screen it has to cross
+ *  is half again as tall. */
+const PER_SCREEN = 36;
+const LEAD_IN = 2200;   // let the hero land before anything moves
+const IDLE = 8000;      // stillness after a press before the drift takes up again
+const SLACK = 2;        // px of movement we will not read as the visitor's
 
 export default function Usher() {
   useEffect(() => {
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-    let step = 0;             // which stop we are resting on
+    const html = document.documentElement;
     let raf = 0;
-    let dwellT: ReturnType<typeof setTimeout>;
+    let leadT: ReturnType<typeof setTimeout>;
     let idleT: ReturnType<typeof setTimeout>;
-    let gliding = false;      // a tween is writing to scrollY right now
-    let yielded = false;      // the visitor has the page
+    let drifting = false;
     let stopped = false;
-    let taken = 0;
-    /* the last position we wrote ourselves. Everything downstream needs to
-       tell our own scrolling from theirs, and this is the only honest way. */
-    let expected = 0;
+    let bound = false;
 
-    const maxScroll = () =>
-      Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    /* our own position, kept as a float. At this speed one frame is worth about
+       four tenths of a pixel, so rounding per frame would hold still for three
+       frames and then jump — the exact stepping this is meant to avoid. */
+    let pos = 0;
+    let expected = 0;   // what the browser reported after our last write
+    let prev = 0;       // timestamp of the previous frame
 
-    /** near enough all of it is already on the screen — the countdown and the
-     *  date are this to each other on a phone, two short acts inside one
-     *  viewport. On a wider screen the same acts are tall enough never to be. */
-    const mostlyShown = (el: HTMLElement) => {
-      const r = el.getBoundingClientRect();
-      const shown = Math.min(r.bottom, window.innerHeight) - Math.max(r.top, 0);
-      return shown / r.height >= 0.85;
-    };
+    const maxScroll = () => Math.max(0, html.scrollHeight - window.innerHeight);
 
-    /** where an act should come to rest: one taller than the screen is walked
-     *  from its top edge, a short one is centred so its heading never ends up
-     *  jammed under the notch */
-    const restFor = (el: HTMLElement) => {
-      const r = el.getBoundingClientRect();
-      const top = r.top + window.scrollY;
-      const vh = window.innerHeight;
-      const y = r.height > vh ? top : top + (r.height - vh) / 2;
-      return Math.max(0, Math.min(y, maxScroll()));
-    };
+    const frame = (now: number) => {
+      if (stopped) return;
+      if (!prev) prev = now;
+      /* a backgrounded tab parks rAF; without the clamp the first frame back
+         would be worth however many seconds it was away, all in one jump */
+      const dt = Math.min(50, now - prev);
+      prev = now;
 
-    const glide = (to: number, then: () => void) => {
-      const from = window.scrollY;
-      const dist = to - from;
-      if (Math.abs(dist) < 4) return then();
+      // the page moved and it was not us
+      if (Math.abs(window.scrollY - expected) > SLACK) return hold();
 
-      /* `html` carries scroll-behavior:smooth, which would re-interpolate
-         every frame we write and turn the tween to soup — the same swap
-         Overture's toTop() makes */
-      const html = document.documentElement;
-      const was = html.style.scrollBehavior;
-      html.style.scrollBehavior = 'auto';
+      /* distance comes from elapsed time, never from a per-frame constant —
+         otherwise the invitation scrolls twice as fast on a 120Hz screen */
+      pos += (window.innerHeight / PER_SCREEN) * (dt / 1000);
 
-      // longer for a longer drop, but never so long it reads as stuck
-      const ms = Math.min(2400, Math.max(750, Math.abs(dist) * 0.9));
-      let t0 = 0;
-      gliding = true;
-
-      const frame = (now: number) => {
-        if (!t0) t0 = now;
-        // the page moved and it was not us: they have taken over
-        if (Math.abs(window.scrollY - expected) > 2) {
-          html.style.scrollBehavior = was;
-          return handOver();
-        }
-        const p = Math.min(1, (now - t0) / ms);
-        window.scrollTo(0, Math.round(from + dist * ease(p)));
-        // read back rather than trust the write — at the end of the document
-        // the browser clamps, and our own write would then look like theirs
-        expected = window.scrollY;
-        if (p < 1) { raf = requestAnimationFrame(frame); return; }
-        html.style.scrollBehavior = was;
-        gliding = false;
-        then();
-      };
+      const end = maxScroll();
+      if (pos >= end) {
+        window.scrollTo(0, end);
+        return finish();          // the signature; there is nowhere further
+      }
+      window.scrollTo(0, pos);
+      expected = window.scrollY;
       raf = requestAnimationFrame(frame);
     };
 
-    const advance = () => {
+    const drift = () => {
       if (stopped) return;
-      step += 1;
-      if (step > STOPS.length) return finish();
-
-      /* the coda — settle on the signature, so the tour ends on the monogram.
-         Unless the last act already all but reached it: a 30px shuffle after a
-         five-second rest reads as a twitch, not as being shown something. */
-      if (step === STOPS.length) {
-        const left = maxScroll() - window.scrollY;
-        return left < window.innerHeight * 0.08 ? finish() : glide(maxScroll(), finish);
-      }
-
-      const el = document.getElementById(STOPS[step].id);
-      if (!el) return advance();
-
-      /* already on the screen — moving would show the same view twice, so the
-         tour stays where it is and spends this act's time here instead */
-      if (mostlyShown(el)) {
-        dwellT = setTimeout(advance, STOPS[step].dwell);
-        return;
-      }
-
-      glide(restFor(el), () => {
-        dwellT = setTimeout(advance, STOPS[step].dwell);
-      });
+      if (window.scrollY >= maxScroll() - 1) return finish();
+      pos = expected = window.scrollY;
+      prev = 0;
+      drifting = true;
+      /* `html` carries scroll-behavior:smooth, which would re-interpolate every
+         frame we write — the same swap Overture's toTop() makes */
+      html.style.scrollBehavior = 'auto';
+      raf = requestAnimationFrame(frame);
     };
 
-    /* the visitor has the page. Let go of it completely — no half-finished
-       tween fighting their thumb — and wait to be sure they are done. */
-    function handOver() {
+    /* the visitor has the page. Let go of it completely — no drift creeping on
+       under their thumb — and wait to be sure they are done. Every further
+       press lands here too, so the eight seconds are counted from the last
+       thing they did rather than the first. */
+    function hold() {
       cancelAnimationFrame(raf);
-      clearTimeout(dwellT);
+      clearTimeout(leadT);
       clearTimeout(idleT);
-      gliding = false;
+      drifting = false;
+      prev = 0;
+      html.style.scrollBehavior = '';
       if (stopped) return;
-      const wasTouring = !yielded;
-      yielded = true;
-      if (wasTouring && ++taken >= GIVE_UP) return finish();
       idleT = setTimeout(resume, IDLE);
     }
 
     function resume() {
       if (stopped) return;
-      // a background tab must not scroll itself; wait for them to come back
+      // a page in a background tab must not scroll itself; wait for them back
       if (document.visibilityState !== 'visible') {
         idleT = setTimeout(resume, IDLE);
         return;
       }
-      /* pick up from where *they* are, not where the tour got to — being
-         yanked back up to an act you deliberately scrolled past is the
-         rudest thing this could do */
-      const y = window.scrollY;
-      /* the first act that is both below them and not already on their screen.
-         Skipping the ones they can see is what makes picking up again read as
-         picking up again — resuming into a stop that needs no movement looks
-         from the sofa exactly like never resuming at all. */
-      let next = STOPS.findIndex((s) => {
-        const el = document.getElementById(s.id);
-        return !!el && restFor(el) > y + 8 && !mostlyShown(el);
-      });
-      if (next === -1) next = maxScroll() > y + 8 ? STOPS.length : -1;
-      if (next === -1) return finish();   // they are already at the end
-      yielded = false;
-      expected = y;
-      step = next - 1;
-      advance();
+      drift();
     }
 
     function finish() {
       stopped = true;
       cancelAnimationFrame(raf);
-      clearTimeout(dwellT);
+      clearTimeout(leadT);
       clearTimeout(idleT);
+      drifting = false;
+      html.style.scrollBehavior = '';
       unbind();
     }
 
-    /* During a glide the frame check above owns takeover detection, so our own
-       scroll events are ignored. During a dwell nothing of ours is moving, so
-       any scroll at all is theirs — which is what catches a scrollbar drag,
-       the one gesture that fires no wheel or touch event. */
+    /* While drifting, the frame check above owns takeover detection, so our own
+       scroll events are ignored. While held, nothing of ours is moving, so any
+       scroll at all is theirs — which is what catches a scrollbar drag, the one
+       gesture that fires no wheel and no touch. */
     const onScroll = () => {
-      if (gliding || yielded) return;
-      if (Math.abs(window.scrollY - expected) <= 2) return;  // tail of our last write
-      handOver();
+      if (drifting) return;
+      if (Math.abs(window.scrollY - expected) <= SLACK) return;
+      hold();
     };
-    const onIntent = () => handOver();
+    const onIntent = () => hold();
 
     const INTENT = ['wheel', 'touchstart', 'touchmove', 'pointerdown', 'keydown'] as const;
 
     function unbind() {
+      if (!bound) return;
+      bound = false;
       INTENT.forEach((e) => window.removeEventListener(e, onIntent));
       window.removeEventListener('scroll', onScroll);
     }
 
     const begin = () => {
+      bound = true;
       expected = window.scrollY;
       // passive throughout: none of these ever calls preventDefault, and a
       // non-passive touchmove listener would cost the page its scroll latency
       INTENT.forEach((e) => window.addEventListener(e, onIntent, { passive: true }));
       window.addEventListener('scroll', onScroll, { passive: true });
-      dwellT = setTimeout(advance, STOPS[0].dwell);
+      leadT = setTimeout(drift, LEAD_IN);
     };
 
     window.addEventListener('invite:opened', begin, { once: true });
