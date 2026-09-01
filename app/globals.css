@@ -875,6 +875,35 @@ html.js:not(.opened) .cue .rule{animation-play-state:paused}
 /* held a little under the old peak, since it no longer swells to it */
 .evening .lamp{opacity:.92}
 .js .evening .portal.in .lamp{opacity:.92}
+/* ── the door, as one flat masked layer ────────────────────────
+   No image, no blend mode, no nesting: the linework is an alpha mask
+   painted over a block of --ink, and the two fades that used to be CSS
+   masks — the horizontal one setting the drawing on the paper, the
+   vertical one dissolving it into the step — are multiplied into that
+   alpha by source/derived/bengali-cuts.js, where they cost nothing.
+
+   The ceremony keeps its <img>. There the glow sits above the drawing and
+   the page carries a breathing backdrop image rather than a fixed wash, so
+   it is not the same composite. That card is also in circulation. */
+.evening .door{
+  display:block;width:100%;aspect-ratio:1;height:auto;
+  background:var(--ink);
+  -webkit-mask-image:url(/assets/door-mask-1300.webp);mask-image:url(/assets/door-mask-1300.webp);
+  -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+  -webkit-mask-position:center;mask-position:center;
+  -webkit-mask-size:contain;mask-size:contain;
+  pointer-events:none;user-select:none;
+}
+@media (max-width:900px){
+  .evening .door{
+    -webkit-mask-image:url(/assets/door-mask-900.webp);
+            mask-image:url(/assets/door-mask-900.webp);
+  }
+}
+/* the monogram is a transparent SVG — the blend bought nothing and cost a
+   re-composite in the same section */
+.evening .sign img{mix-blend-mode:normal}
+
 /* ── the light goes BEHIND the ink ──────────────────────────────
    This was the whole fault. `.lamp` and `.spill` sit at z-index 2 and 1,
    which paints them OVER the drawing: the glow covered the door panels,

@@ -203,25 +203,29 @@ export default function Invitation({ event: v }: { event: WeddingEvent }) {
           <p className="eyebrow" data-r>Venue</p>
 
           <div className="portal" data-r style={i(1)} aria-hidden="true">
-            <div className="ink">
-              <picture>
-                <source type="image/avif" media="(min-width:900px)" srcSet="/assets/door-1300.avif" />
-                <source type="image/webp" media="(min-width:900px)" srcSet="/assets/door-1300.webp" />
-                <source type="image/avif" srcSet="/assets/door-900.avif" />
-                <source type="image/webp" srcSet="/assets/door-900.webp" />
-                {/* On the reception this is not lazy, for the reason the arch
-                    is not: the reveal is a one-second fade, and if the bytes
-                    land after it finishes the drawing appears all at once on
-                    a lit doorway that is already there. Low priority, so it
-                    still queues behind the photographs. The ceremony keeps
-                    `lazy` — the card is in circulation and this is not a bug
-                    worth changing its loading over. */}
-                <img className="door" src="/assets/door-900.webp" alt=""
-                  width={1300} height={1300} decoding="async"
-                  loading={bengali ? undefined : 'lazy'}
-                  fetchPriority={bengali ? 'low' : undefined} />
-              </picture>
-            </div>
+            {bengali ? (
+              /* One flat layer: an alpha mask of the linework painted over a
+                 block of --ink, both fades baked into the alpha. It used to
+                 be a masked <img> inside a masked, multiply-blended wrapper
+                 — a masked group, inside a masked group, inside a blend —
+                 and a blend must be recomputed whenever its backdrop
+                 changes. This page has a fixed backdrop and scrolls itself,
+                 so that stack was re-compositing on every frame of the tour.
+                 That was the flicker; stilling the lanterns removed only one
+                 of its causes. */
+              <i className="door" />
+            ) : (
+              <div className="ink">
+                <picture>
+                  <source type="image/avif" media="(min-width:900px)" srcSet="/assets/door-1300.avif" />
+                  <source type="image/webp" media="(min-width:900px)" srcSet="/assets/door-1300.webp" />
+                  <source type="image/avif" srcSet="/assets/door-900.avif" />
+                  <source type="image/webp" srcSet="/assets/door-900.webp" />
+                  <img className="door" src="/assets/door-900.webp" alt=""
+                    width={1300} height={1300} decoding="async" loading="lazy" />
+                </picture>
+              </div>
+            )}
             <i className="lamp l" />
             <i className="lamp r" />
             <i className="spill" />
