@@ -1,6 +1,6 @@
 'use client';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { invitation, photos } from '@/lib/invitation';
+import { photos, slideInterval } from '@/lib/invitation';
 import s from './PhotoDeck.module.css';
 
 const P = '/gallery/';
@@ -17,7 +17,7 @@ export default function PhotoDeck() {
   /** loops forever — the modulo in `go` is what makes it endless */
   useEffect(() => {
     if (held) return;
-    const t = setInterval(() => setAt((i) => (i + 1) % photos.length), invitation.slideInterval);
+    const t = setInterval(() => setAt((i) => (i + 1) % photos.length), slideInterval);
     return () => clearInterval(t);
   }, [held]);
 

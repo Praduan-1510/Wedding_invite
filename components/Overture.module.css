@@ -174,3 +174,19 @@
   .seal{animation:none}
   .leaf,.inner{transition-duration:.001ms}
 }
+
+/* ── the reception's cover ──────────────────────────────────────
+   The paper beds are literal ivory, so the evening tone has to reach
+   them explicitly. The seal is deliberately untouched: it is the
+   couple's own mark, and it should be the same object on both cards. */
+:global(.evening) .leaf::after{
+  background:linear-gradient(to right,rgba(251,247,239,.34),rgba(251,247,239,.93) 78%);
+}
+:global(.evening) .r::after{
+  background:linear-gradient(to left,rgba(251,247,239,.34),rgba(251,247,239,.93) 78%);
+}
+:global(.evening) .inner::before{
+  background:radial-gradient(62% 48% at 50% 50%,
+    rgba(251,247,239,.94), rgba(251,247,239,.78) 52%, rgba(251,247,239,0) 79%);
+}
+:global(.evening) .leaf{background:var(--paper)}

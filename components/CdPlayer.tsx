@@ -1,9 +1,9 @@
 'use client';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { invitation } from '@/lib/invitation';
+import { music } from '@/lib/invitation';
 import s from './CdPlayer.module.css';
 
-const { title, artist, src, fallback, volume } = invitation.music;
+const { title, artist, src, fallback, volume } = music;
 
 export default function CdPlayer() {
   const audioRef = useRef<HTMLAudioElement>(null);

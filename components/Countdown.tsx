@@ -1,8 +1,6 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import { invitation } from '@/lib/invitation';
 
-const TARGET = new Date(invitation.startsAt).getTime();
 const UNITS = [
   { key: 'd', label: 'Days' },
   { key: 'h', label: 'Hours' },
@@ -10,8 +8,8 @@ const UNITS = [
   { key: 's', label: 'Seconds' },
 ] as const;
 
-function remaining() {
-  const left = Math.max(0, TARGET - Date.now());
+function remaining(target: number) {
+  const left = Math.max(0, target - Date.now());
   return {
     d: String(Math.floor(left / 864e5)),
     h: String(Math.floor(left / 36e5) % 24).padStart(2, '0'),
@@ -20,17 +18,18 @@ function remaining() {
   };
 }
 
-export default function Countdown() {
+export default function Countdown({ startsAt }: { startsAt: string }) {
+  const target = new Date(startsAt).getTime();
   // rendered blank on the server: the value differs every second, and a
   // mismatch between server HTML and first client render is a hydration error
   const [t, setT] = useState<ReturnType<typeof remaining> | null>(null);
   const prev = useRef<Record<string, string>>({});
 
   useEffect(() => {
-    setT(remaining());
-    const id = setInterval(() => setT(remaining()), 1000);
+    setT(remaining(target));
+    const id = setInterval(() => setT(remaining(target)), 1000);
     return () => clearInterval(id);
-  }, []);
+  }, [target]);
 
   return (
     <div className="clock" role="timer">

@@ -1,8 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Cormorant, EB_Garamond, Pinyon_Script } from 'next/font/google';
-import Overture from '@/components/Overture';
-import RevealRoot from '@/components/RevealRoot';
-import Usher from '@/components/Usher';
+import { events } from '@/lib/invitation';
 import './globals.css';
 
 const serif = Cormorant({
@@ -18,10 +16,11 @@ const script = Pinyon_Script({
   variable: '--f-script', display: 'swap',
 });
 
+/* the ceremony's, as the site's default — /reception overrides title,
+   description and openGraph with its own */
 export const metadata: Metadata = {
-  title: 'Rachel & Praduan — 16.11.2026',
-  description:
-    'Welcome to our Wedding Ceremony. Rachel and Praduan, 16 November 2026, Circular Road Baptist Chapel, Kolkata.',
+  title: events.ceremony.meta.title,
+  description: events.ceremony.meta.description,
   icons: {
     // the SVG carries its own prefers-color-scheme rule, so the mark repaints
     // itself for a dark tab strip; the PNGs sit on their own paper bed instead,
@@ -33,8 +32,8 @@ export const metadata: Metadata = {
     apple: '/assets/icon-180.png',
   },
   openGraph: {
-    title: 'Rachel & Praduan — 16.11.2026',
-    description: 'Welcome to our Wedding Ceremony. Circular Road Baptist Chapel, Kolkata.',
+    title: events.ceremony.meta.title,
+    description: events.ceremony.meta.description,
     type: 'website',
   },
 };
@@ -46,27 +45,15 @@ export const viewport: Viewport = {
   viewportFit: 'cover',
 };
 
+/* The card itself is `components/Shell`, rendered by each route — a layout is
+   shared by both invitations and so cannot know whose date to print. */
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${serif.variable} ${book.variable} ${script.variable}`}>
       <body>
         {/* marks that scripting is live, so the reveal styles may hide things */}
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
-
-        {/* the one artwork, fixed behind everything */}
-        <div className="backdrop" aria-hidden="true">
-          <picture>
-            <source media="(min-width:900px)" srcSet="/assets/floral-2400.webp" />
-            <img src="/assets/floral-1400.webp" alt="" fetchPriority="high" decoding="async" />
-          </picture>
-        </div>
-        <div className="grain" aria-hidden="true" />
-
-        {/* before <main> so the seal is the first thing a keyboard reaches */}
-        <Overture />
-        <main>{children}</main>
-        <RevealRoot />
-        <Usher />
+        {children}
       </body>
     </html>
   );

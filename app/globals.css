@@ -189,7 +189,9 @@ img{max-width:100%;display:block;height:auto}
    already frame it there, so let them do the work alone */
 @media (max-width:760px){.sprig{display:none}}
 
-.chapel{width:clamp(3.6rem,9.5vw,5.4rem);margin:0 auto clamp(.9rem,2.4vw,1.5rem);opacity:.9}
+/* the small drawing over the names — a chapel for the ceremony, the
+   couple's monogram for the reception; see lib/invitation.ts */
+.mark{width:clamp(3.6rem,9.5vw,5.4rem);margin:0 auto clamp(.9rem,2.4vw,1.5rem);opacity:.9}
 .names{margin:clamp(.9rem,2.8vw,1.7rem) 0 clamp(.9rem,2.8vw,1.6rem)}
 .name{
   font-family:var(--serif);font-weight:300;
@@ -281,15 +283,23 @@ img{max-width:100%;display:block;height:auto}
 /* the drawing runs to its own edges; fading them is what sets it on the
    paper instead of on a pasted square */
 .ink{
+  mix-blend-mode:multiply;
   -webkit-mask:linear-gradient(90deg,transparent 0,#000 9%,#000 91%,transparent 100%);
           mask:linear-gradient(90deg,transparent 0,#000 9%,#000 91%,transparent 100%);
 }
 /* multiply, so the artwork's white ground vanishes into the paper and only
    the linework darkens it — the treatment the garlands already use. The two
    masks are nested (horizontal on .ink, vertical here) so they compose
-   without mask-composite, which is still uneven across engines. */
+   without mask-composite, which is still uneven across engines.
+
+   The blend has to sit on `.ink`, above, and not here: a mask makes an
+   element a stacking context, so a multiply on this <img> would blend
+   against `.ink`'s own empty group and the white ground would simply be
+   painted over the paper. It was — the drawing sat on a patch three points
+   lighter than the page. Neutral-on-near-white is invisible, which is why it
+   went unnoticed until the reception warmed the paper under it. */
 .door{
-  width:100%;height:auto;user-select:none;mix-blend-mode:multiply;
+  width:100%;height:auto;user-select:none;
   -webkit-mask:linear-gradient(#000 74%,rgba(0,0,0,.4) 89%,transparent 100%);
           mask:linear-gradient(#000 74%,rgba(0,0,0,.4) 89%,transparent 100%);
 }
@@ -470,3 +480,69 @@ html.js:not(.opened) .cue .rule{animation-play-state:paused}
   to  {opacity:1;transform:scale(1.2)}
 }
 @media (prefers-reduced-motion:reduce){.orb{display:none}}
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   THE RECEPTION, AFTER DARK
+
+   The two invitations go to two guest lists and never meet, so the
+   reception is not a variant of the ceremony page — it is the same card
+   printed for a different hour. November in Asansol is dark by six, and
+   that is the whole of the treatment: the ivory warms as if it were
+   under a lamp rather than under a window, the panel deepens out of
+   green and into a burnt brown, the gold gains the extra warmth a flame
+   gives it, and the two lanterns in the door drawing burn harder.
+
+   `.tone` is display:contents on purpose. It has to carry the class
+   down the whole tree — the fixed backdrop and the cover included — and
+   a real box there would put a stacking context between the backdrop
+   and the viewport. Custom properties inherit through it regardless,
+   because inheritance follows the DOM and not the box tree.
+   ═══════════════════════════════════════════════════════════════════ */
+.tone{display:contents}
+
+.evening{
+  --paper:#FBF8F1;      /* the same ivory, warmed as lamplight warms paper */
+  --deep:#221B12;       /* out of the leaf green, into a burnt brown */
+  --gold:#D3B87B;       /* flame-warm, and a shade brighter on the darker bed */
+  --gold-ink:#7E5F24;
+  --cream:#F5EEE1;
+  --grey:#7A7269;
+}
+
+/* the panels are literal rgba rather than var(--paper): they are washes at a
+   set opacity, and the tone has to move with them */
+.evening .backdrop::after{
+  background:linear-gradient(rgba(251,247,239,.52),rgba(251,247,239,.7));
+}
+.evening .paper{background:rgba(251,248,241,.94)}
+.evening .art{background:linear-gradient(rgba(251,248,241,.36),rgba(251,248,241,.36))}
+.evening .deep .eyebrow,.evening .deep .verse{color:rgba(245,238,225,.74)}
+
+/* the monogram stands in for the chapel drawing, and it is a much heavier
+   mark — narrower and lighter, or it out-shouts the names under it */
+.evening .mark{
+  width:clamp(2.9rem,7.4vw,4.3rem);opacity:.76;
+}
+
+/* ── the lanterns, at six o'clock ───────────────────────────────
+   The same two lamps in the same drawing, giving the light they would
+   give after sunset: a hotter core, thrown further, and breathing over
+   a wider range. Only `animation-name` is replaced — the durations,
+   delays and coprime periods of the day version still apply. */
+.evening .lamp{
+  background:radial-gradient(circle at 50% 50%,
+    rgba(255,220,152,.82),rgba(255,208,126,.28) 34%,rgba(255,200,110,0) 70%);
+}
+.js .evening .portal.in .lamp.l,
+.js .evening .portal.in .lamp.r{animation-name:lampBreathLit}
+@keyframes lampBreathLit{
+  from{opacity:.7;transform:translate(-50%,-50%) scale(.95)}
+  to{opacity:1;transform:translate(-50%,-50%) scale(1.11)}
+}
+/* and the pool they throw on the step, which the venue name stands in */
+.evening .spill{
+  background:
+    radial-gradient(38% 52% at 50% 46%,rgba(231,193,113,.62),rgba(231,193,113,0) 72%),
+    radial-gradient(72% 100% at 50% 48%,rgba(211,184,123,.26),rgba(211,184,123,0) 78%);
+}

@@ -1,9 +1,9 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { invitation } from '@/lib/invitation';
+import { couple, type WeddingEvent } from '@/lib/invitation';
 import s from './Overture.module.css';
 
-const v = invitation;
+const c = couple;
 
 /** jumps rather than glides — `html` carries scroll-behavior:smooth */
 function toTop() {
@@ -24,7 +24,7 @@ function toTop() {
  * Server-rendered but hidden unless `.js` is set: a cover that cannot be
  * lifted must never appear.
  */
-export default function Overture() {
+export default function Overture({ event: v }: { event: WeddingEvent }) {
   const [lifted, setLifted] = useState(false);
   const [done, setDone] = useState(false);
 
@@ -72,9 +72,9 @@ export default function Overture() {
         <p className={s.eyebrow}>{v.eyebrow}</p>
 
         <p className={s.names}>
-          <span className={s.name}>{v.first}</span>
-          <span className={s.amp}>{v.conjunction}</span>
-          <span className={s.name}>{v.second}</span>
+          <span className={s.name}>{c.first}</span>
+          <span className={s.amp}>{c.conjunction}</span>
+          <span className={s.name}>{c.second}</span>
         </p>
 
         <i className={s.rule} aria-hidden="true" />
