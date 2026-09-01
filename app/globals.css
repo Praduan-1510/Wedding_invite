@@ -483,15 +483,15 @@ html.js:not(.opened) .cue .rule{animation-play-state:paused}
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   THE RECEPTION, AFTER DARK
+   THE RECEPTION — A BENGALI EVENING
 
-   The two invitations go to two guest lists and never meet, so the
-   reception is not a variant of the ceremony page — it is the same card
-   printed for a different hour. November in Asansol is dark by six, and
-   that is the whole of the treatment: the ivory warms as if it were
-   under a lamp rather than under a window, the panel deepens out of
-   green and into a burnt brown, the gold gains the extra warmth a flame
-   gives it, and the two lanterns in the door drawing burn harder.
+   The two invitations go to two guest lists and never meet, so this is
+   not a variant of the ceremony page. That card is a chapel in the
+   afternoon: cool ivory, magnolia, one centred column. This one is a
+   hall in Asansol after dark, and it is built out of what the couple
+   sent — the sand ground and chocolate brown of the illustrations, the
+   alta red of the saree, the gold of the mandala, and eucalyptus in
+   place of every last magnolia.
 
    `.tone` is display:contents on purpose. It has to carry the class
    down the whole tree — the fixed backdrop and the cover included — and
@@ -502,37 +502,191 @@ html.js:not(.opened) .cue .rule{animation-play-state:paused}
 .tone{display:contents}
 
 .evening{
-  --paper:#FBF8F1;      /* the same ivory, warmed as lamplight warms paper */
-  --deep:#221B12;       /* out of the leaf green, into a burnt brown */
-  --gold:#D3B87B;       /* flame-warm, and a shade brighter on the darker bed */
-  --gold-ink:#7E5F24;
-  --cream:#F5EEE1;
-  --grey:#7A7269;
+  --paper:#FBF3E3;     /* sand paper — the ochre ground, at its palest */
+  --sand:#F2DCAF;      /* and at full strength */
+  --ink:#2B1D11;       /* brown-black. True black is a printer's ink, not a card's */
+  --grey:#7C6A55;      /* warm, so the small type belongs to the same paper */
+  --deep:#34210F;      /* his kurta, deepened — the panel colour */
+  --cream:#F7EDD9;
+  --gold:#C79552;      /* the mandala's own gold */
+  --gold-ink:#8A5E22;  /* and its legible weight, for type on paper */
+  --alta:#B33A22;      /* the saree. One accent, used four times in the whole card */
 }
 
-/* the panels are literal rgba rather than var(--paper): they are washes at a
-   set opacity, and the tone has to move with them */
+/* ── the ground ─────────────────────────────────────────────────
+   No watercolour behind this one, and no picture at all: a page already
+   carrying an illustration, a hanging of eucalyptus and two mandalas does
+   not want a fifth layer under all of it. A sand wash, and nothing else. */
+.evening .backdrop{
+  background:radial-gradient(128% 88% at 50% 0%,#FEFAF1 0%,#F8EBD3 52%,#F0DCB4 100%);
+}
 .evening .backdrop::after{
-  background:linear-gradient(rgba(251,247,239,.52),rgba(251,247,239,.7));
-}
-.evening .paper{background:rgba(251,248,241,.94)}
-.evening .art{background:linear-gradient(rgba(251,248,241,.36),rgba(251,248,241,.36))}
-.evening .deep .eyebrow,.evening .deep .verse{color:rgba(245,238,225,.74)}
-
-/* the monogram stands in for the chapel drawing, and it is a much heavier
-   mark — narrower and lighter, or it out-shouts the names under it */
-.evening .mark{
-  width:clamp(2.9rem,7.4vw,4.3rem);opacity:.76;
+  background:linear-gradient(rgba(251,243,227,.26),rgba(251,243,227,.46));
 }
 
-/* ── the lanterns, at six o'clock ───────────────────────────────
+/* the panels are literal rgba rather than var(--paper): they are washes
+   at a set opacity, and the tone has to move with them */
+.evening .paper{background:rgba(251,243,227,.9)}
+.evening .art{background:linear-gradient(rgba(251,243,227,.3),rgba(251,243,227,.3))}
+.evening .deep .eyebrow,.evening .deep .verse{color:rgba(247,237,217,.76)}
+.evening .paper,.evening .deep,.evening .art{border-top-color:rgba(199,149,82,.34)}
+.evening ::selection{background:var(--alta);color:#fff}
+
+/* the script "and" is the one word on the card that is neither a name
+   nor an instruction, so it gets the saree's red rather than the gold */
+.evening .amp{color:var(--alta)}
+.evening .at i{background:linear-gradient(90deg,transparent,rgba(199,149,82,.9))}
+.evening .at i:last-child{background:linear-gradient(90deg,rgba(199,149,82,.9),transparent)}
+
+/* ═══ I · the split hero ════════════════════════════════════════
+   The couple on the left, turned in toward their own names on the
+   right. Every other section of both invitations is centred, so this
+   opening deliberately changes voice — and because the drawing faces
+   right, the type has to be the thing it faces. Reversed, the two
+   halves would be looking away from each other. */
+.evening #door.split-hero{
+  min-height:100svh;display:flex;align-items:center;overflow:hidden;
+  padding-top:calc(clamp(5rem,14vw,8rem) + env(safe-area-inset-top));
+  padding-bottom:calc(clamp(5rem,14vw,8rem) + env(safe-area-inset-bottom));
+}
+.split{
+  /* position, but deliberately NO z-index: a stacking context here would
+     trap the halo's multiply against an empty group and paint the mandala's
+     white ground onto the paper as a pale, slowly rotating square. Nothing
+     decorative sits behind this column that it needs to outrank. */
+  position:relative;width:100%;
+  max-width:min(68rem,100%);margin:0 auto;
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:clamp(1.6rem,4.5vw,4rem);align-items:center;
+}
+
+.plate{position:relative;display:grid;place-items:center}
+/* No blend mode and no mask: the illustration is cut on alpha in
+   bengali-cuts.js and arrives with no ground to hide. It is the only
+   picture on either card that is a subject rather than a wash, and the
+   only one worth the extra bytes an alpha channel costs. */
+.plate .couple{position:relative;width:100%;height:auto;user-select:none}
+
+/* the type, ranged left against the drawing */
+.say{text-align:left}
+.say .eyebrow,.say .verse{text-wrap:balance}
+.say .name{font-size:clamp(2.1rem,1rem + 4.4vw,4.4rem);line-height:.98}
+.say .names{margin:clamp(.7rem,2vw,1.2rem) 0 clamp(.9rem,2.2vw,1.4rem)}
+.say .amp{margin-left:-.06em}
+.say .verse{margin:0;max-width:38ch;font-size:clamp(.95rem,.9rem + .35vw,1.12rem)}
+.say .hair{
+  margin:clamp(1rem,2.6vw,1.5rem) 0;width:clamp(2.6rem,6vw,4rem);
+  background:linear-gradient(90deg,var(--alta),rgba(179,58,34,0));
+}
+.say .cue{margin-top:clamp(1.2rem,3vw,2rem)}
+.say .cue .rule{margin:0}
+
+/* under 880 the two columns leave a gutter too narrow to set a name in.
+   It stacks, and re-centres — a lone ragged column on a phone reads as a
+   mistake rather than as a decision. */
+@media (max-width:880px){
+  .split{grid-template-columns:1fr;gap:clamp(1.2rem,4vw,2rem);justify-items:center}
+  .plate{width:min(74%,20rem)}
+  .say{text-align:center}
+  .say .verse{margin:0 auto}
+  .say .hair{margin-left:auto;margin-right:auto;
+    background:linear-gradient(90deg,rgba(179,58,34,0),var(--alta),rgba(179,58,34,0))}
+  .say .cue .rule{margin:0 auto}
+  .say .amp{margin-left:0}
+}
+
+/* ═══ II · eucalyptus, hung from the lintel ═════════════════════
+   Cut on black and screened, so the panel shows through untouched
+   wherever the source is black and only the leaves take the light.
+   It hangs rather than swags: the drawing already ends in trailing
+   stems, and cropping them to a garland would waste the one thing
+   this artwork does that the magnolia never did. */
+.evening .euca{
+  position:absolute;top:0;left:50%;z-index:0;
+  width:min(132%,88rem);height:auto;max-width:none;
+  transform:translateX(-50%);transform-origin:50% 0;
+  mix-blend-mode:screen;opacity:.95;
+  pointer-events:none;user-select:none;
+}
+.js [data-r].euca{opacity:0;transform:translate(-50%,-5%)}
+.js [data-r].euca.in{opacity:.95;transform:translateX(-50%)}
+.js [data-r].euca.in{animation:hang 17s ease-in-out 1.3s infinite alternate}
+/* it swings from where it is fixed, which is the lintel, not its middle */
+@keyframes hang{
+  from{transform:translateX(-50%) rotate(-.45deg)}
+  to{transform:translateX(-50%) rotate(.45deg)}
+}
+
+/* ═══ III & IV · the circle, twice, never as a backing ══════════
+   Both mandalas are painted as a CSS `mask` over a block of colour
+   rather than placed as pictures. An <img> of line art on a white
+   field has to `multiply` to disappear into the page, and any ancestor
+   that forms a stacking context — an isolation, a will-change, a
+   z-index — traps that blend and lays the white square straight back
+   down. A mask has no square to lay down, it cannot be trapped, and it
+   takes the theme's own colour. The shape has to sit in the file's
+   ALPHA, though, not in its greys: `mask-mode` defaults to
+   `match-source`, which for a raster mask means alpha, so an opaque
+   greyscale file masks nothing and the coloured block underneath shows
+   up as a plain rectangle.
+
+   Neither is a halo. The red one turns behind the count, because a
+   countdown IS a wheel turning; the gold one rises out of the bottom
+   edge of the date panel, cropped by the page rather than centred on
+   it, and does not move at all. */
+.evening #altar{overflow:hidden}
+.evening .wheel{
+  position:absolute;left:50%;top:50%;z-index:0;
+  width:min(88vmin,33rem);aspect-ratio:1;
+  background:#8E2A16;opacity:.11;
+  -webkit-mask-image:url(/assets/mask-red-560.webp);mask-image:url(/assets/mask-red-560.webp);
+  -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+  -webkit-mask-position:center;mask-position:center;
+  -webkit-mask-size:contain;mask-size:contain;
+  pointer-events:none;
+  animation:wheelBack 220s linear infinite;
+}
+@keyframes wheelBack{
+  from{transform:translate(-50%,-50%) rotate(0)}
+  to{transform:translate(-50%,-50%) rotate(-360deg)}
+}
+
+/* half a gold wheel, coming up out of the foot of the date panel like
+   something rising rather than something hung */
+.evening #light{overflow:hidden}
+.evening .rising{
+  position:absolute;left:50%;bottom:0;z-index:0;
+  width:min(118%,54rem);aspect-ratio:1;
+  transform:translate(-50%,54%);
+  background:var(--gold);opacity:.2;
+  -webkit-mask-image:url(/assets/mask-gold-720.webp);mask-image:url(/assets/mask-gold-720.webp);
+  -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+  -webkit-mask-position:center;mask-position:center;
+  -webkit-mask-size:contain;mask-size:contain;
+  pointer-events:none;
+}
+/* a phone never shows it larger than about 24rem — the 720 cut is 32 KB of
+   detail nobody can resolve there */
+@media (max-width:760px){
+  .evening .rising{
+    -webkit-mask-image:url(/assets/mask-gold-360.webp);
+            mask-image:url(/assets/mask-gold-360.webp);
+  }
+}
+
+/* everything decorative and infinite parks with its section, as the
+   orbs and garlands already do */
+.js .act:not(.vis) .euca,
+.js .act:not(.vis) .wheel{animation-play-state:paused}
+
+/* ═══ V · the lanterns, at six o'clock ══════════════════════════
    The same two lamps in the same drawing, giving the light they would
    give after sunset: a hotter core, thrown further, and breathing over
    a wider range. Only `animation-name` is replaced — the durations,
    delays and coprime periods of the day version still apply. */
 .evening .lamp{
   background:radial-gradient(circle at 50% 50%,
-    rgba(255,220,152,.82),rgba(255,208,126,.28) 34%,rgba(255,200,110,0) 70%);
+    rgba(255,216,140,.85),rgba(255,199,112,.3) 34%,rgba(255,190,96,0) 70%);
 }
 .js .evening .portal.in .lamp.l,
 .js .evening .portal.in .lamp.r{animation-name:lampBreathLit}
@@ -540,9 +694,14 @@ html.js:not(.opened) .cue .rule{animation-play-state:paused}
   from{opacity:.7;transform:translate(-50%,-50%) scale(.95)}
   to{opacity:1;transform:translate(-50%,-50%) scale(1.11)}
 }
-/* and the pool they throw on the step, which the venue name stands in */
 .evening .spill{
   background:
-    radial-gradient(38% 52% at 50% 46%,rgba(231,193,113,.62),rgba(231,193,113,0) 72%),
-    radial-gradient(72% 100% at 50% 48%,rgba(211,184,123,.26),rgba(211,184,123,0) 78%);
+    radial-gradient(38% 52% at 50% 46%,rgba(226,171,92,.66),rgba(226,171,92,0) 72%),
+    radial-gradient(72% 100% at 50% 48%,rgba(199,149,82,.28),rgba(199,149,82,0) 78%);
+}
+
+@media (prefers-reduced-motion:reduce){
+  /* the blanket rule above stops every animation; these two are stated
+     as facts rather than as motion, so they must survive it */
+  .js [data-r].euca{opacity:.95;transform:translateX(-50%)}
 }

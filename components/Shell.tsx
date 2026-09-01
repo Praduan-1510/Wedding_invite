@@ -19,12 +19,19 @@ import type { WeddingEvent } from '@/lib/invitation';
 export default function Shell({ event }: { event: WeddingEvent }) {
   return (
     <div className={`tone ${event.tone}`}>
-      {/* the one artwork, fixed behind everything */}
+      {/* The one artwork, fixed behind everything — but only the ceremony
+          has one. The reception has no magnolia left on it and takes no
+          replacement picture either: a full-page image behind a page that
+          is already carrying an illustration, a hanging of eucalyptus and
+          two mandalas is one layer too many. Its ground is a sand wash,
+          and nothing else. */}
       <div className="backdrop" aria-hidden="true">
-        <picture>
-          <source media="(min-width:900px)" srcSet="/assets/floral-2400.webp" />
-          <img src="/assets/floral-1400.webp" alt="" fetchPriority="high" decoding="async" />
-        </picture>
+        {event.tone === 'evening' ? null : (
+          <picture>
+            <source media="(min-width:900px)" srcSet="/assets/floral-2400.webp" />
+            <img src="/assets/floral-1400.webp" alt="" fetchPriority="high" decoding="async" />
+          </picture>
+        )}
       </div>
       <div className="grain" aria-hidden="true" />
 

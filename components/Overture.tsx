@@ -60,12 +60,16 @@ export default function Overture({ event: v }: { event: WeddingEvent }) {
       className={`${s.cover} ${lifted ? s.lifted : ''} ${done ? s.done : ''}`}
       onClick={open}
     >
-      {/* two leaves of one sheet: together they carry the whole painting */}
+      {/* Two leaves of one sheet: together they carry the whole painting —
+          and on the reception, a single mandala centred on the fold, so
+          pressing the seal parts it down the middle. */}
       <div className={`${s.leaf} ${s.l}`} aria-hidden="true">
-        <img src="/assets/floral-1400.webp" alt="" fetchPriority="high" decoding="async" />
+        <img src={v.coverArt.src} width={v.coverArt.w} height={v.coverArt.h}
+          alt="" fetchPriority="high" decoding="async" />
       </div>
       <div className={`${s.leaf} ${s.r}`} aria-hidden="true">
-        <img src="/assets/floral-1400.webp" alt="" fetchPriority="high" decoding="async" />
+        <img src={v.coverArt.src} width={v.coverArt.w} height={v.coverArt.h}
+          alt="" fetchPriority="high" decoding="async" />
       </div>
 
       <div className={s.inner}>

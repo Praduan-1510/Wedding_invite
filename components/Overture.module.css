@@ -176,17 +176,43 @@
 }
 
 /* ── the reception's cover ──────────────────────────────────────
-   The paper beds are literal ivory, so the evening tone has to reach
-   them explicitly. The seal is deliberately untouched: it is the
-   couple's own mark, and it should be the same object on both cards. */
+   One mandala, centred on the fold rather than one painting per leaf:
+   each leaf holds the same image pushed half its own width past the
+   join, so the two halves meet as a whole circle and the press of the
+   seal tears it down the middle. `overflow:hidden` on the leaf is what
+   does the cutting — there is no second, half-width asset.
+
+   The paper beds are literal ivory in the rules above, so the sand tone
+   has to reach them explicitly. The seal is deliberately untouched: it
+   is the couple's own mark, and it should be the same object on both
+   cards. */
+:global(.evening) .leaf{
+  background:var(--paper);
+  /* will-change:transform makes the leaf a stacking context, which would trap
+     the mandala's multiply and lay its white ground over the sand. The leaf
+     animates a transform anyway, and browsers promote that on their own for
+     exactly as long as it runs — the hint was buying nothing here. */
+  will-change:auto;
+}
+:global(.evening) .leaf img{
+  inset:auto;top:50%;
+  width:auto;height:min(78vh,42rem);max-width:none;
+  object-fit:contain;opacity:.62;
+}
+:global(.evening) .l img{left:100%;transform:translate(-50%,-50%)}
+:global(.evening) .r img{left:0;transform:translate(-50%,-50%)}
+
 :global(.evening) .leaf::after{
-  background:linear-gradient(to right,rgba(251,247,239,.34),rgba(251,247,239,.93) 78%);
+  background:linear-gradient(to right,rgba(251,243,227,.28),rgba(251,243,227,.9) 78%);
 }
 :global(.evening) .r::after{
-  background:linear-gradient(to left,rgba(251,247,239,.34),rgba(251,247,239,.93) 78%);
+  background:linear-gradient(to left,rgba(251,243,227,.28),rgba(251,243,227,.9) 78%);
 }
 :global(.evening) .inner::before{
   background:radial-gradient(62% 48% at 50% 50%,
-    rgba(251,247,239,.94), rgba(251,247,239,.78) 52%, rgba(251,247,239,0) 79%);
+    rgba(251,243,227,.95), rgba(251,243,227,.8) 52%, rgba(251,243,227,0) 79%);
 }
-:global(.evening) .leaf{background:var(--paper)}
+/* the date is the one line of the cover that changes between the two
+   cards, and on sand the near-black it was set in reads as a hole */
+:global(.evening) .date{color:#4A3722}
+:global(.evening) .eyebrow,:global(.evening) .go{color:#63513C}

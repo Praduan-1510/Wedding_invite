@@ -43,10 +43,23 @@ export type WeddingEvent = {
    * the lanterns up, because the reception begins after dark in November.
    */
   tone: 'day' | 'evening';
-  /** the small drawing over the names */
-  mark: { src: string; alt: string; w: number; h: number };
+  /** the small drawing over the names — the split hero carries none */
+  mark?: { src: string; alt: string; w: number; h: number };
+  /** the painting printed on the closed card */
+  coverArt: { src: string; w: number; h: number };
   /** what a shared link says it is */
   meta: { title: string; description: string };
+  /** what plays when the cover is lifted */
+  music: {
+    title: string;
+    artist: string;
+    /** 96k AAC, faststart, so playback begins on the first buffered seconds */
+    src: string;
+    /** the original, kept only for anything that cannot decode AAC */
+    fallback: string;
+    /** playback level once faded in — background, never overpowering */
+    volume: number;
+  };
 };
 
 /** the half of the card that is the same on both */
@@ -55,18 +68,7 @@ export const couple = {
   conjunction: 'and',
   second: 'Praduan',
   verse:
-    'I have found the one whom my soul loves. Together, we begin our forever under God\u2019s grace.',
-} as const;
-
-export const music = {
-  title: 'We Cry Holy',
-  artist: 'Bethel Music',
-  /** 96k AAC, faststart, so playback begins on the first buffered seconds */
-  src: '/assets/song.m4a',
-  /** the original, kept only for anything that cannot decode AAC */
-  fallback: '/assets/song.mp3',
-  /** playback level once faded in — background, never overpowering */
-  volume: 0.42,
+    'I have found the one whom my soul loves. Together, we begin our forever under God’s grace.',
 } as const;
 
 /** ms per slide */
@@ -88,10 +90,15 @@ export const events = {
     tone: 'day',
     /* the chapel is drawn because the ceremony is in one */
     mark: { src: '/assets/chapel.svg', alt: 'Line drawing of a chapel', w: 600, h: 645 },
+    coverArt: { src: '/assets/floral-1400.webp', w: 1400, h: 1400 },
     meta: {
       title: 'Rachel & Praduan — 16.11.2026',
       description:
         'Welcome to our Wedding Ceremony. Rachel and Praduan, 16 November 2026, Circular Road Baptist Chapel, Kolkata.',
+    },
+    music: {
+      title: 'We Cry Holy', artist: 'Bethel Music',
+      src: '/assets/song.m4a', fallback: '/assets/song.mp3', volume: 0.42,
     },
   },
 
@@ -108,14 +115,21 @@ export const events = {
       full: 'Mahal Banquet, MXJ9+F43, Hutton Rd, Pathak Bari, Asansol, West Bengal 713301',
     },
     tone: 'evening',
-    /* a chapel over a banquet hall would be a lie. The couple\u2019s own
-       monogram is the mark that belongs on their reception \u2014 it is already
-       the seal on the cover and the signature at the foot. */
-    mark: { src: '/assets/monogram.svg', alt: 'Rachel and Praduan monogram', w: 692, h: 763 },
+    /* No mark over the names: the split hero gives the couple themselves the
+       left half, and a device above the type as well would be one thing too
+       many. The cover is a single gold mandala centred on the fold, so
+       pressing the seal parts it down the middle. */
+    coverArt: { src: '/assets/mandala-gold-720.webp', w: 720, h: 720 },
     meta: {
       title: 'Rachel & Praduan — Reception, 21.11.2026',
       description:
         'Welcome to our Wedding Reception. Rachel and Praduan, 21 November 2026, Mahal Banquet, Asansol.',
+    },
+    /* a sarod, for a Bengali evening — the chapel's worship song would be
+       the wrong room entirely */
+    music: {
+      title: 'Piku Moments — Sarod Theme', artist: 'Dr Anirudh Kumar',
+      src: '/assets/sarod.m4a', fallback: '/assets/sarod.mp3', volume: 0.46,
     },
   },
 } as const satisfies Record<string, WeddingEvent>;
