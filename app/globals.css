@@ -816,12 +816,27 @@ html.js:not(.opened) .cue .rule{animation-play-state:paused}
   background:radial-gradient(circle at 50% 50%,
     rgba(255,216,140,.85),rgba(255,199,112,.3) 34%,rgba(255,190,96,0) 70%);
 }
+/* ── lit, and STILL ─────────────────────────────────────────────
+   The ceremony's lanterns breathe, and they can afford to: there the
+   glow sits on top of the drawing, so a frame of it repaints a pair of
+   small circles and nothing else.
+
+   Here the glow is behind the ink — which is what stopped it washing the
+   linework out — and the ink above it is a 430px image carrying a
+   `mix-blend-mode:multiply` and two nested masks. A blend has to be
+   recomputed whenever its BACKDROP changes, so every frame of the breath
+   was forcing that whole masked group to re-composite. That is the
+   flicker on the closing graphic.
+
+   So on this card the lanterns are simply lit. Nothing in the section
+   animates, the blend is computed once, and the loss is a breath at 7
+   and 9.5 seconds that was never the point of the picture — the light
+   coming from behind the door was. */
 .js .evening .portal.in .lamp.l,
-.js .evening .portal.in .lamp.r{animation-name:lampBreathLit}
-@keyframes lampBreathLit{
-  from{opacity:.7;transform:translate(-50%,-50%) scale(.95)}
-  to{opacity:1;transform:translate(-50%,-50%) scale(1.11)}
-}
+.js .evening .portal.in .lamp.r{animation:none}
+/* held a little under the old peak, since it no longer swells to it */
+.evening .lamp{opacity:.92}
+.js .evening .portal.in .lamp{opacity:.92}
 /* ── the light goes BEHIND the ink ──────────────────────────────
    This was the whole fault. `.lamp` and `.spill` sit at z-index 2 and 1,
    which paints them OVER the drawing: the glow covered the door panels,
