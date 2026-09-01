@@ -531,11 +531,14 @@ html.js:not(.opened) .cue .rule{animation-play-state:paused}
    arguing with any of them. */
 .evening{--jali:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2796%27%20height%3D%2796%27%20viewBox%3D%270%200%2096%2096%27%3E%3Cg%20fill%3D%27none%27%20stroke%3D%27%23B98F4E%27%20stroke-width%3D%271.15%27%3E%3Ccircle%20cx%3D%270%27%20cy%3D%270%27%20r%3D%2748%27%2F%3E%3Ccircle%20cx%3D%2796%27%20cy%3D%270%27%20r%3D%2748%27%2F%3E%3Ccircle%20cx%3D%270%27%20cy%3D%2796%27%20r%3D%2748%27%2F%3E%3Ccircle%20cx%3D%2796%27%20cy%3D%2796%27%20r%3D%2748%27%2F%3E%3Ccircle%20cx%3D%2748%27%20cy%3D%2748%27%20r%3D%2748%27%2F%3E%3C%2Fg%3E%3Cg%20fill%3D%27%23B98F4E%27%3E%3Ccircle%20cx%3D%2748%27%20cy%3D%270%27%20r%3D%272.6%27%2F%3E%3Ccircle%20cx%3D%270%27%20cy%3D%2748%27%20r%3D%272.6%27%2F%3E%3Ccircle%20cx%3D%2796%27%20cy%3D%2748%27%20r%3D%272.6%27%2F%3E%3Ccircle%20cx%3D%2748%27%20cy%3D%2796%27%20r%3D%272.6%27%2F%3E%3Ccircle%20cx%3D%2748%27%20cy%3D%2748%27%20r%3D%272%27%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E")}
 
+/* The backdrop carries NO screen. Every other section on this card is
+   opaque, so the fixed ground is only ever seen through the countdown —
+   and that section already has an element of its own, the red mandala
+   turning behind the figures. A lattice under a mandala is two patterns
+   arguing over the same square inch. Plain sand there; the screen lives
+   on the paper sections, which is where there is nothing else. */
 .evening .backdrop{
-  background:
-    var(--jali) 0 0 / 96px 96px repeat,
-    radial-gradient(128% 88% at 50% 0%,#FEFAF1 0%,#F8EBD3 52%,#F0DCB4 100%);
-  opacity:1;
+  background:radial-gradient(128% 88% at 50% 0%,#FEFAF1 0%,#F8EBD3 52%,#F0DCB4 100%);
 }
 .evening .backdrop::after{
   background:linear-gradient(rgba(251,243,227,.5),rgba(251,243,227,.66));
@@ -551,18 +554,28 @@ html.js:not(.opened) .cue .rule{animation-play-state:paused}
    this paper is not. On the ceremony's near-white ivory that is invisible;
    on sand it is a grey rectangle around the door. The gradient keeps the
    tone the transparency used to borrow from the ground beneath. */
-/* The paper carries the screen too, because it is opaque and the fixed
-   backdrop cannot reach through it. Per-section rather than
-   `background-attachment:fixed`, which iOS refuses to composite — and
-   the two paper sections are never adjacent on this card, so a tile that
-   restarts at each one has no seam to show. */
-.evening .paper{
-  background:
-    /* held to a whisper: on paper there is no wash over it the way the
-       backdrop has one, so the opacity has to be in the ink itself */
-    linear-gradient(rgba(252,246,234,.88),rgba(250,240,223,.88)),
-    var(--jali) 0 0 / 96px 96px repeat,
-    linear-gradient(#FCF6EA,#F9EFDD);
+.evening .paper{background:linear-gradient(#FCF6EA,#F9EFDD)}
+
+/* The paper carries the screen, because it is opaque and the fixed backdrop
+   cannot reach through it — and it has to be painted per-section, since
+   `background-attachment:fixed` is the one thing iOS refuses to composite.
+   Which means the tile RESTARTS at every panel, and where two paper panels
+   meet (the hero and the photographs now do) the lattice visibly jumped.
+
+   So it is not a background any more but a masked layer that dissolves at
+   the top and bottom of each panel. A tile that restarts inside a fade has
+   nothing to show, the fold reads as two sheets of paper rather than one
+   misprint, and the screen is quietest exactly where the type sits.
+
+   It stays UNDER the content and OVER the panel's own opaque colour, so
+   the backdrop every white-backed drawing multiplies against is still
+   fully opaque — see the note on `.evening .paper` being opaque. */
+.evening .paper::before{
+  content:'';position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:var(--jali) 0 0 / 96px 96px repeat;
+  opacity:.42;
+  -webkit-mask:linear-gradient(transparent 0,#000 14%,#000 86%,transparent 100%);
+          mask:linear-gradient(transparent 0,#000 14%,#000 86%,transparent 100%);
 }
 .evening .art{background:linear-gradient(rgba(251,243,227,.3),rgba(251,243,227,.3))}
 .evening .deep .eyebrow,.evening .deep .verse{color:rgba(247,237,217,.76)}
@@ -582,19 +595,19 @@ html.js:not(.opened) .cue .rule{animation-play-state:paused}
    right, the type has to be the thing it faces. Reversed, the two
    halves would be looking away from each other. */
 .evening #door.split-hero{
-  min-height:100svh;display:flex;align-items:center;overflow:hidden;
+  min-height:100svh;overflow:hidden;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
   padding-top:calc(clamp(5rem,14vw,8rem) + env(safe-area-inset-top));
   padding-bottom:calc(clamp(5rem,14vw,8rem) + env(safe-area-inset-bottom));
 }
 .split{
   /* position, but deliberately NO z-index: a stacking context here would
-     trap the halo's multiply against an empty group and paint the mandala's
-     white ground onto the paper as a pale, slowly rotating square. Nothing
-     decorative sits behind this column that it needs to outrank. */
+     trap a blend against an empty group. Nothing decorative sits behind
+     this column that it needs to outrank. */
   position:relative;width:100%;
-  max-width:min(68rem,100%);margin:0 auto;
+  max-width:min(74rem,100%);margin:0 auto;
   display:grid;grid-template-columns:1fr 1fr;
-  gap:clamp(1.6rem,4.5vw,4rem);align-items:center;
+  gap:clamp(1.6rem,4.5vw,4.5rem);align-items:center;
 }
 
 .plate{position:relative;display:grid;place-items:center}
@@ -604,19 +617,36 @@ html.js:not(.opened) .cue .rule{animation-play-state:paused}
    only one worth the extra bytes an alpha channel costs. */
 .plate .couple{position:relative;width:100%;height:auto;user-select:none}
 
-/* the type, ranged left against the drawing */
+/* ── the type, ranged left against the drawing ──────────────────
+   Set as one block with a settled rhythm rather than four things spaced
+   apart: label, names, rule, verse. The label is cut back in size and
+   tracking until it holds ONE line beside the drawing — two ragged lines
+   of tracked capitals over a name that large is the thing that made this
+   column look unset. */
 .say{text-align:left}
 .say .eyebrow,.say .verse{text-wrap:balance}
-.say .name{font-size:clamp(2.1rem,1rem + 4.4vw,4.4rem);line-height:.98}
-.say .names{margin:clamp(.7rem,2vw,1.2rem) 0 clamp(.9rem,2.2vw,1.4rem)}
+.say .eyebrow{
+  font-size:clamp(.7rem,.55rem + .48vw,.92rem);
+  letter-spacing:.2em;line-height:1.85;
+  /* wide enough to hold "Welcome to our Wedding Reception" whole beside
+     the drawing — 26ch of tracked capitals broke it into three lines,
+     which is worse than the two it started with */
+  max-width:36ch;
+}
+.say .name{font-size:clamp(2.1rem,1rem + 4.6vw,4.6rem);line-height:.98}
+.say .names{margin:clamp(.85rem,2.2vw,1.35rem) 0 0}
 .say .amp{margin-left:-.06em}
-.say .verse{margin:0;max-width:38ch;font-size:clamp(.95rem,.9rem + .35vw,1.12rem)}
+/* the rule is the join between the names and the verse, so it wants room
+   on both sides of it — pressed to the names it reads as an underline */
 .say .hair{
-  margin:clamp(1rem,2.6vw,1.5rem) 0;width:clamp(2.6rem,6vw,4rem);
+  margin:clamp(1.35rem,3.2vw,2rem) 0;
+  width:clamp(3.4rem,8vw,5.5rem);height:1px;
   background:linear-gradient(90deg,var(--alta),rgba(179,58,34,0));
 }
-.say .cue{margin-top:clamp(1.2rem,3vw,2rem)}
-.say .cue .rule{margin:0}
+.say .verse{
+  margin:0;max-width:42ch;
+  font-size:clamp(1rem,.93rem + .4vw,1.2rem);line-height:1.74;
+}
 
 /* under 880 the two columns leave a gutter too narrow to set a name in.
    It stacks, and re-centres — a lone ragged column on a phone reads as a
@@ -625,33 +655,62 @@ html.js:not(.opened) .cue .rule{animation-play-state:paused}
   .split{grid-template-columns:1fr;gap:clamp(1.2rem,4vw,2rem);justify-items:center}
   .plate{width:min(74%,20rem)}
   .say{text-align:center}
+  .say .eyebrow{margin-left:auto;margin-right:auto}
   .say .verse{margin:0 auto}
   .say .hair{margin-left:auto;margin-right:auto;
     background:linear-gradient(90deg,rgba(179,58,34,0),var(--alta),rgba(179,58,34,0))}
-  .say .cue .rule{margin:0 auto}
   .say .amp{margin-left:0}
 }
 
-/* ═══ II · eucalyptus, hung from the lintel ═════════════════════
-   Cut on black and screened, so the panel shows through untouched
-   wherever the source is black and only the leaves take the light.
-   It hangs rather than swags: the drawing already ends in trailing
-   stems, and cropping them to a garland would waste the one thing
-   this artwork does that the magnolia never did. */
-.evening .euca{
-  position:absolute;top:0;left:50%;z-index:0;
-  width:min(132%,88rem);height:auto;max-width:none;
-  transform:translateX(-50%);transform-origin:50% 0;
-  mix-blend-mode:screen;opacity:.95;
-  pointer-events:none;user-select:none;
+/* the cue belongs to the page, not to the right-hand column: parked at
+   the end of the type it hung off the left edge of a ragged block and
+   read as a mistake. Centred under the spread, it is a scroll cue again. */
+.split-hero .cue{margin-top:clamp(1.8rem,4.5vw,3rem)}
+
+/* ═══ II · the photographs, under a lit arch ════════════════════
+   The second section is no longer a dark panel — it is a light spread in
+   two halves, photographs left, record right, on the same grid the hero
+   uses so the two openings rhyme.
+
+   The arch is white-backed on `multiply`, which is the paper treatment;
+   its whole middle is empty white, so it vanishes there and the
+   photographs sit in the clear under it. It is first in the DOM and both
+   it and the deck are z-index auto, so paint order alone keeps every leaf
+   behind every face — no z-index needed, and so no stacking context to
+   trap the blend. */
+.evening #procession{overflow:hidden}
+.duet .split{align-items:center}
+
+/* The arch is sized in absolute terms rather than as a percentage of the
+   column, because the space the photographs need below it is a fixed
+   fraction of its OWN height and there is no way to say "58% of a
+   percentage". Both come off `--aw`, so the two move together. */
+.reel{
+  --aw:min(132%,46rem);
+  position:relative;display:grid;place-items:center;
 }
-.js [data-r].euca{opacity:0;transform:translate(-50%,-5%)}
-.js [data-r].euca.in{opacity:.95;transform:translateX(-50%)}
-.js [data-r].euca.in{animation:hang 17s ease-in-out 1.3s infinite alternate}
-/* it swings from where it is fixed, which is the lintel, not its middle */
-@keyframes hang{
-  from{transform:translateX(-50%) rotate(-.45deg)}
-  to{transform:translateX(-50%) rotate(.45deg)}
+.reel .arch{
+  position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:var(--aw);max-width:none;height:auto;
+  mix-blend-mode:multiply;pointer-events:none;user-select:none;
+}
+/* The three lanterns hang into the middle of the arch, between about a
+   third and three-fifths of the way down. The deck starts below them:
+   pulled any higher it covers the lanterns, which are the one thing this
+   artwork has that a plain wreath does not. The source is 735x554, so its
+   height is 0.754 of its width and 60% of that is 0.452. */
+.reel .under{
+  width:100%;
+  padding-top:calc(var(--aw) * 0.452);
+}
+.js [data-r].arch{opacity:0;transform:translate(-50%,-5%)}
+.js [data-r].arch.in{opacity:1;transform:translateX(-50%)}
+
+/* the record, given a column of its own and the room to be an object */
+.record{display:grid;place-items:center}
+@media (max-width:880px){
+  .reel{--aw:min(112%,32rem)}
+  .record{margin-top:clamp(2rem,7vw,3.5rem)}
 }
 
 /* ═══ III & IV · the circle, twice, never as a backing ══════════
@@ -757,10 +816,30 @@ html.js:not(.opened) .cue .rule{animation-play-state:paused}
   from{opacity:.7;transform:translate(-50%,-50%) scale(.95)}
   to{opacity:1;transform:translate(-50%,-50%) scale(1.11)}
 }
+/* ── the light goes BEHIND the ink ──────────────────────────────
+   This was the whole fault. `.lamp` and `.spill` sit at z-index 2 and 1,
+   which paints them OVER the drawing: the glow covered the door panels,
+   the linework dissolved into it, and what was meant to read as lamplight
+   read as an orange stain with an edge you could trace. On the ceremony's
+   near-white ivory it passed, because there the glow is barely tinted.
+   On sand it had nothing to contrast against.
+
+   Dropped below the ink, it is right for the same reason it looks right:
+   light is behind the door and the ink is on the paper in front of it. The
+   drawing multiplies over the glow, so the lines stay as black as they ever
+   were and the light comes up between them — through the stone, around the
+   lanterns, and out along the ground. `.portal` forms no stacking context
+   of its own, so -1 puts them in the section's negative layer, painted
+   after its background and before everything else. */
+.evening .lamp,.evening .spill{z-index:-1}
+
+/* and now that it is not fighting the linework it can be light rather than
+   paint: paler, far wider, and with no edge anywhere near the drawing */
 .evening .spill{
+  left:50%;bottom:-18%;width:158%;height:74%;
   background:
-    radial-gradient(38% 52% at 50% 46%,rgba(226,171,92,.66),rgba(226,171,92,0) 72%),
-    radial-gradient(72% 100% at 50% 48%,rgba(199,149,82,.28),rgba(199,149,82,0) 78%);
+    radial-gradient(42% 56% at 50% 44%,rgba(233,192,124,.5),rgba(233,192,124,0) 76%),
+    radial-gradient(92% 116% at 50% 48%,rgba(210,174,118,.2),rgba(210,174,118,0) 80%);
 }
 
 @media (prefers-reduced-motion:reduce){

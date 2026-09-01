@@ -72,9 +72,11 @@ function HeroSplit({ v }: { v: WeddingEvent }) {
           </div>
           <i className="hair" data-r style={i(5)} aria-hidden="true" />
           <p className="verse" data-r style={i(6)}>{c.verse}</p>
-          <div className="cue" data-r style={i(7)} aria-hidden="true"><i className="rule" /></div>
         </div>
       </div>
+
+      {/* the scroll cue belongs to the page, not to the right-hand column */}
+      <div className="cue" data-r style={i(7)} aria-hidden="true"><i className="rule" /></div>
     </section>
   );
 }
@@ -92,18 +94,35 @@ export default function Invitation({ event: v }: { event: WeddingEvent }) {
     <>
       {bengali ? <HeroSplit v={v} /> : <HeroCentred v={v} />}
 
-      {/* ══ II · photographs and the record, on the deep panel ═══ */}
-      <section className="act deep" id="procession" aria-label="Photographs and music">
+      {/* ══ II · photographs and the record ════════════════════
+          On the ceremony this is the dark panel with its two sprays. On the
+          reception it is a light spread in two halves: the photographs on
+          the left under a watercolour arch of eucalyptus, wisteria and three
+          hanging lanterns — the same lamps burning either side of the venue
+          door, so the two sections answer each other — and the record on the
+          right, large enough to be an object rather than a control. */}
+      <section className={`act ${bengali ? 'paper duet' : 'deep'}`} id="procession"
+        aria-label="Photographs and music">
         {bengali ? (
-          /* eucalyptus hung from the lintel. Cut on black and screened, so
-             the panel shows through untouched wherever the source is black
-             and only the leaves catch the light — the spray's recipe, on
-             foliage that actually hangs. */
-          <picture aria-hidden="true">
-            <source media="(min-width:760px)" srcSet="/assets/euca-1200.webp" />
-            <img className="euca" data-r src="/assets/euca-760.webp" alt=""
-              width={1200} height={783} loading="lazy" decoding="async" />
-          </picture>
+          <div className="split">
+            <div className="reel">
+              {/* behind the photographs, not over them: the middle of the
+                  arch is empty white, so `multiply` leaves the paper alone
+                  there and nothing ever crosses a face */}
+              {/* Not lazy. Lazy-loading started the download only as the
+                  section arrived, so the one-second reveal could run to
+                  completion on an empty box and the picture then appeared
+                  all at once — the pop. Low priority instead: it is fetched
+                  with the page but never ahead of the photographs. */}
+              <img className="arch" data-r aria-hidden="true" alt=""
+                src="/assets/arch-735.webp"
+                srcSet="/assets/arch-480.webp 480w, /assets/arch-735.webp 735w, /assets/arch-1470.webp 1470w"
+                sizes="(max-width:880px) 112vw, 56vw"
+                width={1470} height={1108} fetchPriority="low" decoding="async" />
+              <div className="under" data-r><PhotoDeck /></div>
+            </div>
+            <div className="record" data-r style={i(1)}><CdPlayer music={v.music} /></div>
+          </div>
         ) : (
           <>
             <picture aria-hidden="true">
@@ -116,13 +135,12 @@ export default function Invitation({ event: v }: { event: WeddingEvent }) {
               <img className="spray br" data-r src="/assets/spray-br-820.webp" alt=""
                 width={1300} height={1040} loading="lazy" decoding="async" />
             </picture>
+            <div className="inner">
+              <div data-r><PhotoDeck /></div>
+              <div data-r style={i(1)}><CdPlayer music={v.music} /></div>
+            </div>
           </>
         )}
-
-        <div className="inner">
-          <div data-r><PhotoDeck /></div>
-          <div data-r style={i(1)}><CdPlayer music={v.music} /></div>
-        </div>
       </section>
 
       {/* ══ III · counting, with the artwork showing through ═════ */}

@@ -68,3 +68,26 @@
 @media (prefers-reduced-motion:reduce){
   .on .shot img{transform:none}
 }
+
+/* ── on the reception's light spread ────────────────────────────
+   The pile is described in the rules above as falling back INTO THE DARK:
+   the fanned photographs are dimmed with `brightness()` and the arrows and
+   dots are cream, because that section used to be a brown panel. On paper
+   every one of those is wrong — a darkened photograph reads as damaged
+   rather than as further away, and cream type on sand is not type at all.
+   Here the pile recedes by going quiet instead, and the ink comes back. */
+:global(.evening) .pool{
+  background:radial-gradient(48% 46% at 50% 50%,rgba(199,149,82,.2),rgba(199,149,82,.06) 55%,rgba(199,149,82,0) 76%);
+}
+:global(.evening) .slide{
+  box-shadow:0 1px 2px rgba(74,52,26,.14),0 16px 34px -14px rgba(74,52,26,.42);
+}
+:global(.evening) .on{
+  box-shadow:0 2px 5px rgba(74,52,26,.18),0 26px 54px -18px rgba(74,52,26,.5);
+}
+:global(.evening) .prev,:global(.evening) .next{opacity:.52;filter:none}
+:global(.evening) .prev2,:global(.evening) .next2{opacity:.24;filter:none}
+
+:global(.evening) .arrow{color:rgba(43,29,17,.42)}
+:global(.evening) .arrow:hover,:global(.evening) .arrow:focus-visible{color:var(--alta)}
+:global(.evening) .dot::before{border-color:rgba(43,29,17,.32)}
