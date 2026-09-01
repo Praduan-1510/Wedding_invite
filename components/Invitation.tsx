@@ -199,8 +199,17 @@ export default function Invitation({ event: v }: { event: WeddingEvent }) {
                 <source type="image/webp" media="(min-width:900px)" srcSet="/assets/door-1300.webp" />
                 <source type="image/avif" srcSet="/assets/door-900.avif" />
                 <source type="image/webp" srcSet="/assets/door-900.webp" />
+                {/* On the reception this is not lazy, for the reason the arch
+                    is not: the reveal is a one-second fade, and if the bytes
+                    land after it finishes the drawing appears all at once on
+                    a lit doorway that is already there. Low priority, so it
+                    still queues behind the photographs. The ceremony keeps
+                    `lazy` — the card is in circulation and this is not a bug
+                    worth changing its loading over. */}
                 <img className="door" src="/assets/door-900.webp" alt=""
-                  width={1300} height={1300} loading="lazy" decoding="async" />
+                  width={1300} height={1300} decoding="async"
+                  loading={bengali ? undefined : 'lazy'}
+                  fetchPriority={bengali ? 'low' : undefined} />
               </picture>
             </div>
             <i className="lamp l" />
@@ -228,7 +237,8 @@ export default function Invitation({ event: v }: { event: WeddingEvent }) {
         <div className="sign" data-r style={i(5)}>
           <i className="rule" aria-hidden="true" />
           <img src="/assets/monogram.svg" alt="Rachel and Praduan monogram"
-            width={692} height={763} loading="lazy" />
+            width={692} height={763}
+            loading={bengali ? undefined : 'lazy'} fetchPriority="low" />
         </div>
       </section>
     </>
