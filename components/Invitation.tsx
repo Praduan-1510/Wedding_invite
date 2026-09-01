@@ -153,68 +153,48 @@ export default function Invitation({ event: v }: { event: WeddingEvent }) {
         )}
       </section>
 
-      {/* ══ III · counting, with the artwork showing through ═════ */}
-      {/* ══ III · counting ══════════════════════════════════════
-          The ceremony counts on a centred panel. The reception counts as a
-          spread: the couple drawn on the left, the figures on the right, and
-          the red mandala turning behind the figures rather than behind the
-          whole section — a wheel is the one honest shape for a countdown, and
-          putting it under the numbers is what makes it read as one.
+      {/* ══ III · counting — the ceremony's own panel ═════════
+          The reception has no separate countdown section: counting and the
+          date are the same statement, so they share one panel below. */}
+      {!bengali && (
+        <section className="act art" id="altar" aria-label="Countdown">
+          <div className="inner" data-r><Countdown startsAt={v.startsAt} /></div>
+        </section>
+      )}
 
-          It is painted as a CSS mask over a block of colour, not as a
-          picture: line art on a white field needs `multiply` to vanish into
-          the paper, and any ancestor that forms a stacking context silently
-          traps that blend and puts the white square back. A mask has no
-          square to put back. */}
-      <section className={`act art${bengali ? ' spread' : ''}`} id="altar" aria-label="Countdown">
+      {/* ══ IV · when ═══════════════════════════════════════════
+          On the ceremony, the date alone on the deep panel. On the
+          reception the panel carries the whole of "when": the count on the
+          left, the date and hour on the right. They were two sections
+          saying one thing, with a drawing between them that had nothing to
+          add — the gold mandala rising out of the foot is the only
+          ornament either of them needed. */}
+      <section className="act deep" id="light" aria-label={bengali ? 'When' : undefined}>
+        <Orbs />
+        <Flecks />
+        {bengali && <i className="rising" aria-hidden="true" />}
+
         {bengali ? (
-          <div className="split">
-            <div className="drawn" data-r>
-              <img className="pair" src="/assets/pair-538.webp"
-                srcSet="/assets/pair-420.webp 420w, /assets/pair-538.webp 538w"
-                sizes="(max-width:880px) 62vw, 30vw"
-                width={538} height={638} loading="lazy" decoding="async"
-                alt="Illustration of a Bengali bride and groom, hand on shoulder" />
-            </div>
-            <div className="count" data-r style={i(1)}>
-              <i className="wheel" aria-hidden="true" />
-              <Countdown startsAt={v.startsAt} />
+          <div className="split when">
+            <div className="count" data-r><Countdown startsAt={v.startsAt} /></div>
+            <div className="stamped" data-r style={i(1)}>
+              <p className="verse">{c.verse}</p>
+              <p className="stamp">
+                <span>{v.date}</span>
+                <i className="bar" aria-hidden="true" />
+                <span>{v.time}</span>
+              </p>
             </div>
           </div>
         ) : (
-          <div className="inner" data-r><Countdown startsAt={v.startsAt} /></div>
-        )}
-      </section>
-
-      {/* ══ IV · the date, on the deep panel ════════════════════ */}
-      <section className="act deep" id="light">
-        <Orbs />
-        <Flecks />
-        {/* and the gold one, rising out of the bottom edge — half a wheel,
-            cropped by the page rather than centred on it */}
-        {bengali && <i className="rising" aria-hidden="true" />}
-        <div className="inner">
-          <p className="verse" data-r>{c.verse}</p>
-
-          {bengali ? (
-            /* date and time on one line at one size, divided by a rule —
-               which is how the Asansol design sets it: `21.11.2026 | 7:00 PM`.
-               The ceremony keeps its own lockup, a large date over a tracked
-               small-caps time, because that is the card already in circulation. */
-            <p className="stamp" data-r style={i(1)}>
-              <span>{v.date}</span>
-              <i className="bar" aria-hidden="true" />
-              <span>{v.time}</span>
+          <div className="inner">
+            <p className="verse" data-r>{c.verse}</p>
+            <p className="big-date" data-r style={i(1)}>{v.date}</p>
+            <p className="at" data-r style={i(2)}>
+              <i aria-hidden="true" /><span>{v.time}</span><i aria-hidden="true" />
             </p>
-          ) : (
-            <>
-              <p className="big-date" data-r style={i(1)}>{v.date}</p>
-              <p className="at" data-r style={i(2)}>
-                <i aria-hidden="true" /><span>{v.time}</span><i aria-hidden="true" />
-              </p>
-            </>
-          )}
-        </div>
+          </div>
+        )}
       </section>
 
       {/* ══ V · where — standing at the door ════════════════════ */}

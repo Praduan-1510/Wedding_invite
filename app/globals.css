@@ -684,6 +684,18 @@ html.js:not(.opened) .cue .rule{animation-play-state:paused}
    it and the deck are z-index auto, so paint order alone keeps every leaf
    behind every face — no z-index needed, and so no stacking context to
    trap the blend. */
+/* These two are spreads, not panels: the arch and the drawing bring their
+   own breathing room, so the section does not also have to. `.act` pads to
+   7.5rem, which was right when this was a dark full-bleed band and left a
+   dead stripe under the illustration once it became a picture on paper. */
+.evening #procession{
+  padding-top:clamp(2.5rem,6vw,4.5rem);
+  padding-bottom:clamp(2.5rem,6vw,4.5rem);
+}
+.evening #light{
+  padding-top:clamp(3.4rem,8vw,5.5rem);
+  padding-bottom:clamp(3.4rem,8vw,5.5rem);
+}
 .evening #procession{overflow:hidden}
 .duet .split{align-items:center}
 
@@ -692,7 +704,7 @@ html.js:not(.opened) .cue .rule{animation-play-state:paused}
    fraction of its OWN height and there is no way to say "58% of a
    percentage". Both come off `--aw`, so the two move together. */
 .reel{
-  --aw:min(132%,46rem);
+  --aw:min(124%,42rem);
   position:relative;display:grid;place-items:center;
 }
 .reel .arch{
@@ -720,8 +732,8 @@ html.js:not(.opened) .cue .rule{animation-play-state:paused}
    holds — see source/derived/cutouts.py */
 .reel .portrait{
   position:relative;z-index:1;
-  width:min(62%,17rem);height:auto;
-  filter:drop-shadow(0 16px 20px rgba(74,52,26,.16));
+  width:min(52%,13.5rem);height:auto;
+  filter:drop-shadow(0 14px 18px rgba(74,52,26,.16));
 }
 .reel .stand::after{
   content:'';position:absolute;left:50%;bottom:1.5%;transform:translateX(-50%);
@@ -734,84 +746,21 @@ html.js:not(.opened) .cue .rule{animation-play-state:paused}
 /* the record, given a column of its own and the room to be an object */
 .record{display:grid;place-items:center}
 @media (max-width:880px){
-  .reel{--aw:min(112%,32rem)}
+  /* the stacked grid shrink-wraps its items, so the column these two size
+     themselves against collapsed to whatever their own content asked for —
+     which left the arch and the figures at about a third of the width they
+     should have on a phone */
+  .reel,.count,.stamped{width:100%}
+  .reel{--aw:min(104%,27rem)}
   .record{margin-top:clamp(2rem,7vw,3.5rem)}
 }
 
-/* ═══ III & IV · the circle, twice, never as a backing ══════════
-   Both mandalas are painted as a CSS `mask` over a block of colour
-   rather than placed as pictures. An <img> of line art on a white
-   field has to `multiply` to disappear into the page, and any ancestor
-   that forms a stacking context — an isolation, a will-change, a
-   z-index — traps that blend and lays the white square straight back
-   down. A mask has no square to lay down, it cannot be trapped, and it
-   takes the theme's own colour. The shape has to sit in the file's
-   ALPHA, though, not in its greys: `mask-mode` defaults to
-   `match-source`, which for a raster mask means alpha, so an opaque
-   greyscale file masks nothing and the coloured block underneath shows
-   up as a plain rectangle.
-
-   Neither is a halo. The red one turns behind the count, because a
-   countdown IS a wheel turning; the gold one rises out of the bottom
-   edge of the date panel, cropped by the page rather than centred on
-   it, and does not move at all. */
-/* ── the count, as a spread ─────────────────────────────────────
-   The couple drawn on the left, the figures on the right, and the wheel
-   behind the FIGURES rather than behind the whole section — under the
-   numbers is what makes it read as the thing they are turning on. */
-.evening #altar{overflow:hidden}
-.spread .split{align-items:center}
-.drawn{display:grid;place-items:center}
-/* The source is a 736x736 crop and the drawing runs off the bottom of it,
-   so the cut-out ends on a straight horizontal line across her saree. Faded
-   out, it reads as a drawing settling into the paper instead of one that has
-   been guillotined — the same thing `.ink` does to the door. The mask takes
-   the drop-shadow with it, which is why there is no shadow left hanging
-   below the fade. */
-.drawn .pair{
-  width:min(86%,20rem);height:auto;
-  filter:drop-shadow(0 14px 20px rgba(74,52,26,.13));
-  -webkit-mask:linear-gradient(#000 78%,rgba(0,0,0,.35) 92%,transparent 100%);
-          mask:linear-gradient(#000 78%,rgba(0,0,0,.35) 92%,transparent 100%);
-}
-.count{position:relative;display:grid;place-items:center}
-.count .clock{position:relative;z-index:1}
-/* a clock built for a full-width panel does not fit in half of one */
-.spread .clock{gap:clamp(.2rem,1.6vw,1.1rem)}
-.spread .num{font-size:clamp(1.7rem,1rem + 2.6vw,3.2rem)}
-.spread .unit{min-width:clamp(2.3rem,6vw,4.1rem)}
-.spread .sep{font-size:clamp(1.1rem,.8rem + 1.5vw,2rem)}
-.spread .unit small{font-size:clamp(.46rem,.42rem + .18vw,.62rem);letter-spacing:.19em}
-
-.evening .wheel{
-  position:absolute;left:50%;top:50%;z-index:0;
-  width:min(88vmin,33rem);aspect-ratio:1;
-  background:#8E2A16;opacity:.11;
-  -webkit-mask-image:url(/assets/mask-red-560.webp);mask-image:url(/assets/mask-red-560.webp);
-  -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
-  -webkit-mask-position:center;mask-position:center;
-  -webkit-mask-size:contain;mask-size:contain;
-  pointer-events:none;
-  animation:wheelBack 220s linear infinite;
-}
-@keyframes wheelBack{
-  from{transform:translate(-50%,-50%) rotate(0)}
-  to{transform:translate(-50%,-50%) rotate(-360deg)}
-}
-/* sized to the column it now sits in, not to the section */
-.spread .count .wheel{width:min(132%,24rem)}
-@media (max-width:880px){
-  .drawn .pair{width:min(62%,15rem)}
-  .count{margin-top:clamp(1.4rem,5vw,2.4rem)}
-  .spread .count .wheel{width:min(108%,20rem)}
-}
-
 /* ── date and time, one line, one size ─────────────────────────
-   `21.11.2026 | 7:00 PM`, set the way the Asansol design sets it. The
-   rule between them is the pipe. It wraps rather than shrinks on a
-   narrow screen — at four words of display type there is no size that
-   fits 360px and still reads as the loudest thing on the panel — and
-   the divider turns with it. */
+   `21.11.2026 | 7:00 PM`, set the way the Asansol design sets it. The rule
+   between them is the pipe. It wraps rather than shrinks on a narrow
+   screen — at four words of display type there is no size that fits 360px
+   and still reads as the loudest thing on the panel — and the divider
+   turns with it. */
 .stamp{
   display:flex;align-items:center;justify-content:center;flex-wrap:wrap;
   gap:clamp(.85rem,2.8vw,1.9rem);
@@ -832,14 +781,51 @@ html.js:not(.opened) .cue .rule{animation-play-state:paused}
     background:linear-gradient(90deg,transparent,var(--gold),transparent)}
 }
 
+/* ── when: counting and the date, one panel, two halves ─────────
+   These were two sections saying one thing, with a drawing between them
+   that had nothing to add. The deep panel is the reception's single dark
+   moment, so it carries the whole statement: the count on the left, the
+   date and hour on the right, and the gold mandala rising out of the foot
+   as the only ornament either half needed.
+
+   Every colour in the clock is set for ink on paper, because that is where
+   it used to live. On chocolate it needs cream and gold. */
+.split.when{align-items:center}
+.split.when .count{display:grid;place-items:center}
+.split.when .stamped{text-align:center}
+.split.when .verse{max-width:34ch;margin:0 auto}
+.split.when .stamp{margin-top:clamp(.9rem,2.4vw,1.5rem)}
+/* a lockup and a clock built for a full-width panel do not fit in half of one */
+.split.when .stamp span{font-size:clamp(1.6rem,1rem + 2.2vw,2.9rem)}
+.split.when .stamp .bar{height:clamp(1.3rem,3.6vw,2.2rem)}
+.split.when .clock{gap:clamp(.2rem,1.5vw,1rem)}
+.split.when .num{font-size:clamp(1.6rem,1rem + 2.4vw,3rem);color:var(--cream)}
+.split.when .unit{min-width:clamp(2.2rem,5.6vw,3.9rem)}
+.split.when .sep{font-size:clamp(1rem,.8rem + 1.4vw,1.9rem);color:var(--gold)}
+.split.when .unit small{
+  font-size:clamp(.46rem,.42rem + .18vw,.62rem);letter-spacing:.19em;
+  color:rgba(247,237,217,.62);
+}
+
+/* ═══ the circle, and it is never a backing ═════════════════════
+   The mandala is painted as a CSS `mask` over a block of colour rather
+   than placed as a picture. An <img> of line art on a white field has to
+   `multiply` to disappear into the page, and any ancestor that forms a
+   stacking context — an isolation, a will-change, a z-index — traps that
+   blend and lays the white square straight back down. A mask has no
+   square to lay down, it cannot be trapped, and it takes the theme's own
+   colour. The shape has to sit in the file's ALPHA, though, not in its
+   greys: `mask-mode` defaults to `match-source`, which for a raster mask
+   means alpha, so an opaque greyscale file masks nothing and the coloured
+   block underneath shows up as a plain rectangle. */
 /* half a gold wheel, coming up out of the foot of the date panel like
    something rising rather than something hung */
 .evening #light{overflow:hidden}
 .evening .rising{
   position:absolute;left:50%;bottom:0;z-index:0;
-  width:min(118%,54rem);aspect-ratio:1;
-  transform:translate(-50%,54%);
-  background:var(--gold);opacity:.2;
+  width:min(84%,38rem);aspect-ratio:1;
+  transform:translate(-50%,56%);
+  background:var(--gold);opacity:.18;
   -webkit-mask-image:url(/assets/mask-gold-720.webp);mask-image:url(/assets/mask-gold-720.webp);
   -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
   -webkit-mask-position:center;mask-position:center;
@@ -857,8 +843,7 @@ html.js:not(.opened) .cue .rule{animation-play-state:paused}
 
 /* everything decorative and infinite parks with its section, as the
    orbs and garlands already do */
-.js .act:not(.vis) .euca,
-.js .act:not(.vis) .wheel{animation-play-state:paused}
+.js .act:not(.vis) .euca{animation-play-state:paused}
 
 /* ═══ V · the lanterns, at six o'clock ══════════════════════════
    The same two lamps in the same drawing, giving the light they would
