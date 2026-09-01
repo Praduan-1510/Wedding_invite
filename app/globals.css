@@ -573,7 +573,10 @@ html.js:not(.opened) .cue .rule{animation-play-state:paused}
 .evening .paper::before{
   content:'';position:absolute;inset:0;z-index:0;pointer-events:none;
   background:var(--jali) 0 0 / 96px 96px repeat;
-  opacity:.42;
+  /* per-section, because the hero cannot carry what an emptier panel can:
+     it holds the illustration AND the whole name lockup, and a lattice
+     strong enough to read as a wall there reads as noise behind the type */
+  opacity:var(--jali-a,.2);
   -webkit-mask:linear-gradient(transparent 0,#000 14%,#000 86%,transparent 100%);
           mask:linear-gradient(transparent 0,#000 14%,#000 86%,transparent 100%);
 }
@@ -594,6 +597,9 @@ html.js:not(.opened) .cue .rule{animation-play-state:paused}
    opening deliberately changes voice — and because the drawing faces
    right, the type has to be the thing it faces. Reversed, the two
    halves would be looking away from each other. */
+/* the quietest of the three — barely a texture behind the names */
+.evening #door{--jali-a:.11}
+
 .evening #door.split-hero{
   min-height:100svh;overflow:hidden;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
