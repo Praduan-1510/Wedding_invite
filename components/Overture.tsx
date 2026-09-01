@@ -63,14 +63,17 @@ export default function Overture({ event: v }: { event: WeddingEvent }) {
       {/* Two leaves of one sheet: together they carry the whole painting —
           and on the reception, a single mandala centred on the fold, so
           pressing the seal parts it down the middle. */}
-      <div className={`${s.leaf} ${s.l}`} aria-hidden="true">
-        <img src={v.coverArt.src} width={v.coverArt.w} height={v.coverArt.h}
-          alt="" fetchPriority="high" decoding="async" />
-      </div>
-      <div className={`${s.leaf} ${s.r}`} aria-hidden="true">
-        <img src={v.coverArt.src} width={v.coverArt.w} height={v.coverArt.h}
-          alt="" fetchPriority="high" decoding="async" />
-      </div>
+      {[s.l, s.r].map((side, i) => (
+        <div className={`${s.leaf} ${side}`} key={i} aria-hidden="true">
+          <img className={s.art} src={v.coverArt.src} width={v.coverArt.w} height={v.coverArt.h}
+            alt="" fetchPriority="high" decoding="async" />
+          {/* the alpona at the threshold, halved by the fold like the mandala */}
+          {v.tone === 'evening' && (
+            <img className={s.alpona} src="/assets/alpona.svg"
+              width={1400} height={440} alt="" decoding="async" />
+          )}
+        </div>
+      ))}
 
       <div className={s.inner}>
         <p className={s.eyebrow}>{v.eyebrow}</p>
