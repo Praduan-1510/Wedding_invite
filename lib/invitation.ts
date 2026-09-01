@@ -4,8 +4,9 @@
  * Nothing here is invented.
  *
  * The two events are **separate invitations for separate guest lists**, not one
- * page with two dates on it: `/` is the ceremony, `/reception` is Asansol, and
- * neither links to the other. Everything they share — the couple, the verse,
+ * page with two dates on it: `/wedding` is the Kolkata ceremony, `/reception`
+ * is Asansol, and neither links to the other. `/` redirects to `/wedding` so
+ * that links already in guests' hands keep working. Everything they share — the couple, the verse,
  * the photographs, the music — lives above; everything that differs is in
  * `events`, and there is only ever one copy of the markup.
  */
@@ -77,7 +78,7 @@ export const slideInterval = 3000;
 export const events = {
   /* ── I · the ceremony — source/ref/V4 - Kolkata.png ─────────────── */
   ceremony: {
-    path: '/',
+    path: '/wedding',
     eyebrow: 'Welcome to our Wedding Ceremony',
     date: '16.11.2026',
     time: '4:00 PM',
