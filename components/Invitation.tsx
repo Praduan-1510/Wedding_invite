@@ -119,7 +119,17 @@ export default function Invitation({ event: v }: { event: WeddingEvent }) {
                 srcSet="/assets/arch-480.webp 480w, /assets/arch-735.webp 735w, /assets/arch-1470.webp 1470w"
                 sizes="(max-width:880px) 112vw, 56vw"
                 width={1470} height={1108} fetchPriority="low" decoding="async" />
-              <div className="under" data-r><PhotoDeck /></div>
+              {/* The two of them, cut out and standing in the opening of the
+                  arch. One photograph that IS them beats ten they have to be
+                  found in — and the green Banarasi under the eucalyptus is
+                  the reason this picture and this arch belong together. */}
+              <div className="under stand" data-r>
+                <img className="portrait" src="/assets/portrait-634.webp"
+                  srcSet="/assets/portrait-600.webp 600w, /assets/portrait-634.webp 634w"
+                  sizes="(max-width:880px) 56vw, 27vw"
+                  width={634} height={1086} decoding="async"
+                  alt="Rachel and Praduan in Bengali dress — she in a green Banarasi saree, he in a blue kurta" />
+              </div>
             </div>
             <div className="record" data-r style={i(1)}><CdPlayer music={v.music} /></div>
           </div>
@@ -144,16 +154,36 @@ export default function Invitation({ event: v }: { event: WeddingEvent }) {
       </section>
 
       {/* ══ III · counting, with the artwork showing through ═════ */}
-      <section className="act art" id="altar" aria-label="Countdown">
-        {/* The red mandala, turning behind the figures — a wheel is the one
-            honest shape for a countdown, and the only place on this card
-            where the alta red gets to be large. It is painted as a CSS mask
-            over a block of colour, not as a picture: line art on a white
-            field needs `multiply` to vanish into the paper, and any ancestor
-            that forms a stacking context silently traps that blend and puts
-            the white square back. A mask has no square to put back. */}
-        {bengali && <i className="wheel" aria-hidden="true" />}
-        <div className="inner" data-r><Countdown startsAt={v.startsAt} /></div>
+      {/* ══ III · counting ══════════════════════════════════════
+          The ceremony counts on a centred panel. The reception counts as a
+          spread: the couple drawn on the left, the figures on the right, and
+          the red mandala turning behind the figures rather than behind the
+          whole section — a wheel is the one honest shape for a countdown, and
+          putting it under the numbers is what makes it read as one.
+
+          It is painted as a CSS mask over a block of colour, not as a
+          picture: line art on a white field needs `multiply` to vanish into
+          the paper, and any ancestor that forms a stacking context silently
+          traps that blend and puts the white square back. A mask has no
+          square to put back. */}
+      <section className={`act art${bengali ? ' spread' : ''}`} id="altar" aria-label="Countdown">
+        {bengali ? (
+          <div className="split">
+            <div className="drawn" data-r>
+              <img className="pair" src="/assets/pair-538.webp"
+                srcSet="/assets/pair-420.webp 420w, /assets/pair-538.webp 538w"
+                sizes="(max-width:880px) 62vw, 30vw"
+                width={538} height={638} loading="lazy" decoding="async"
+                alt="Illustration of a Bengali bride and groom, hand on shoulder" />
+            </div>
+            <div className="count" data-r style={i(1)}>
+              <i className="wheel" aria-hidden="true" />
+              <Countdown startsAt={v.startsAt} />
+            </div>
+          </div>
+        ) : (
+          <div className="inner" data-r><Countdown startsAt={v.startsAt} /></div>
+        )}
       </section>
 
       {/* ══ IV · the date, on the deep panel ════════════════════ */}

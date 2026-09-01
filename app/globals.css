@@ -700,14 +700,33 @@ html.js:not(.opened) .cue .rule{animation-play-state:paused}
   width:var(--aw);max-width:none;height:auto;
   mix-blend-mode:multiply;pointer-events:none;user-select:none;
 }
-/* The three lanterns hang into the middle of the arch, between about a
-   third and three-fifths of the way down. The deck starts below them:
-   pulled any higher it covers the lanterns, which are the one thing this
+/* ── the two of them, standing in the opening ───────────────────
+   Not a slider any more: one cut-out portrait, under the lanterns, in the
+   clear middle of the arch. The three lanterns hang between about a third
+   and three-fifths of the way down, so the figures start below them —
+   pulled any higher they cover the lanterns, which are the one thing this
    artwork has that a plain wreath does not. The source is 735x554, so its
-   height is 0.754 of its width and 60% of that is 0.452. */
+   height is 0.754 of its width and 58% of that is 0.44.
+
+   The shadow is what stops it floating. A drop-shadow gives the figures
+   body; the ellipse on the ground gives them somewhere to stand. Without
+   both, a cut-out on paper reads as a sticker. */
 .reel .under{
-  width:100%;
-  padding-top:calc(var(--aw) * 0.452);
+  position:relative;width:100%;
+  padding-top:calc(var(--aw) * 0.44);
+}
+.reel .stand{display:grid;place-items:center}
+/* never drawn wider than the 634px of subject the photograph actually
+   holds — see source/derived/cutouts.py */
+.reel .portrait{
+  position:relative;z-index:1;
+  width:min(62%,17rem);height:auto;
+  filter:drop-shadow(0 16px 20px rgba(74,52,26,.16));
+}
+.reel .stand::after{
+  content:'';position:absolute;left:50%;bottom:1.5%;transform:translateX(-50%);
+  width:min(44%,12rem);height:1.5rem;border-radius:50%;pointer-events:none;
+  background:radial-gradient(50% 50% at 50% 50%,rgba(74,52,26,.22),rgba(74,52,26,0) 72%);
 }
 .js [data-r].arch{opacity:0;transform:translate(-50%,-5%)}
 .js [data-r].arch.in{opacity:1;transform:translateX(-50%)}
@@ -736,7 +755,34 @@ html.js:not(.opened) .cue .rule{animation-play-state:paused}
    countdown IS a wheel turning; the gold one rises out of the bottom
    edge of the date panel, cropped by the page rather than centred on
    it, and does not move at all. */
+/* ── the count, as a spread ─────────────────────────────────────
+   The couple drawn on the left, the figures on the right, and the wheel
+   behind the FIGURES rather than behind the whole section — under the
+   numbers is what makes it read as the thing they are turning on. */
 .evening #altar{overflow:hidden}
+.spread .split{align-items:center}
+.drawn{display:grid;place-items:center}
+/* The source is a 736x736 crop and the drawing runs off the bottom of it,
+   so the cut-out ends on a straight horizontal line across her saree. Faded
+   out, it reads as a drawing settling into the paper instead of one that has
+   been guillotined — the same thing `.ink` does to the door. The mask takes
+   the drop-shadow with it, which is why there is no shadow left hanging
+   below the fade. */
+.drawn .pair{
+  width:min(86%,20rem);height:auto;
+  filter:drop-shadow(0 14px 20px rgba(74,52,26,.13));
+  -webkit-mask:linear-gradient(#000 78%,rgba(0,0,0,.35) 92%,transparent 100%);
+          mask:linear-gradient(#000 78%,rgba(0,0,0,.35) 92%,transparent 100%);
+}
+.count{position:relative;display:grid;place-items:center}
+.count .clock{position:relative;z-index:1}
+/* a clock built for a full-width panel does not fit in half of one */
+.spread .clock{gap:clamp(.2rem,1.6vw,1.1rem)}
+.spread .num{font-size:clamp(1.7rem,1rem + 2.6vw,3.2rem)}
+.spread .unit{min-width:clamp(2.3rem,6vw,4.1rem)}
+.spread .sep{font-size:clamp(1.1rem,.8rem + 1.5vw,2rem)}
+.spread .unit small{font-size:clamp(.46rem,.42rem + .18vw,.62rem);letter-spacing:.19em}
+
 .evening .wheel{
   position:absolute;left:50%;top:50%;z-index:0;
   width:min(88vmin,33rem);aspect-ratio:1;
@@ -751,6 +797,13 @@ html.js:not(.opened) .cue .rule{animation-play-state:paused}
 @keyframes wheelBack{
   from{transform:translate(-50%,-50%) rotate(0)}
   to{transform:translate(-50%,-50%) rotate(-360deg)}
+}
+/* sized to the column it now sits in, not to the section */
+.spread .count .wheel{width:min(132%,24rem)}
+@media (max-width:880px){
+  .drawn .pair{width:min(62%,15rem)}
+  .count{margin-top:clamp(1.4rem,5vw,2.4rem)}
+  .spread .count .wheel{width:min(108%,20rem)}
 }
 
 /* ── date and time, one line, one size ─────────────────────────
