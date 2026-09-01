@@ -517,16 +517,53 @@ html.js:not(.opened) .cue .rule{animation-play-state:paused}
    No watercolour behind this one, and no picture at all: a page already
    carrying an illustration, a hanging of eucalyptus and two mandalas does
    not want a fifth layer under all of it. A sand wash, and nothing else. */
+/* ── the jali ───────────────────────────────────────────────────
+   A pierced stone screen, which is what a hall like this one has in
+   place of a window. Interlaced circles on a square lattice is the real
+   construction — each circle meets its neighbours exactly on the tile
+   edges, so the repeat closes into a continuous field of pointed arches
+   with no seam anywhere.
+
+   It is drawn rather than photographed: a few hundred bytes of inline
+   SVG, sharp at any size, and it takes the theme's gold. And it is
+   geometry, so it is the one kind of ornament that can sit under an
+   illustration, a hanging of eucalyptus and two mandalas without
+   arguing with any of them. */
+.evening{--jali:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2796%27%20height%3D%2796%27%20viewBox%3D%270%200%2096%2096%27%3E%3Cg%20fill%3D%27none%27%20stroke%3D%27%23B98F4E%27%20stroke-width%3D%271.15%27%3E%3Ccircle%20cx%3D%270%27%20cy%3D%270%27%20r%3D%2748%27%2F%3E%3Ccircle%20cx%3D%2796%27%20cy%3D%270%27%20r%3D%2748%27%2F%3E%3Ccircle%20cx%3D%270%27%20cy%3D%2796%27%20r%3D%2748%27%2F%3E%3Ccircle%20cx%3D%2796%27%20cy%3D%2796%27%20r%3D%2748%27%2F%3E%3Ccircle%20cx%3D%2748%27%20cy%3D%2748%27%20r%3D%2748%27%2F%3E%3C%2Fg%3E%3Cg%20fill%3D%27%23B98F4E%27%3E%3Ccircle%20cx%3D%2748%27%20cy%3D%270%27%20r%3D%272.6%27%2F%3E%3Ccircle%20cx%3D%270%27%20cy%3D%2748%27%20r%3D%272.6%27%2F%3E%3Ccircle%20cx%3D%2796%27%20cy%3D%2748%27%20r%3D%272.6%27%2F%3E%3Ccircle%20cx%3D%2748%27%20cy%3D%2796%27%20r%3D%272.6%27%2F%3E%3Ccircle%20cx%3D%2748%27%20cy%3D%2748%27%20r%3D%272%27%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E")}
+
 .evening .backdrop{
-  background:radial-gradient(128% 88% at 50% 0%,#FEFAF1 0%,#F8EBD3 52%,#F0DCB4 100%);
+  background:
+    var(--jali) 0 0 / 96px 96px repeat,
+    radial-gradient(128% 88% at 50% 0%,#FEFAF1 0%,#F8EBD3 52%,#F0DCB4 100%);
+  opacity:1;
 }
 .evening .backdrop::after{
-  background:linear-gradient(rgba(251,243,227,.26),rgba(251,243,227,.46));
+  background:linear-gradient(rgba(251,243,227,.5),rgba(251,243,227,.66));
 }
 
 /* the panels are literal rgba rather than var(--paper): they are washes
    at a set opacity, and the tone has to move with them */
-.evening .paper{background:rgba(251,243,227,.9)}
+/* OPAQUE, and that is load-bearing rather than a colour choice. Blending
+   against a partially transparent backdrop leaks the source through:
+   Co = (1 - ab)·Cs + ab·B(Cb,Cs). The door and the monogram are white-backed
+   artwork on `multiply`, so at ab=.9 a tenth of pure white is laid over the
+   page inside their boxes — lighter AND cooler, because white is neutral and
+   this paper is not. On the ceremony's near-white ivory that is invisible;
+   on sand it is a grey rectangle around the door. The gradient keeps the
+   tone the transparency used to borrow from the ground beneath. */
+/* The paper carries the screen too, because it is opaque and the fixed
+   backdrop cannot reach through it. Per-section rather than
+   `background-attachment:fixed`, which iOS refuses to composite — and
+   the two paper sections are never adjacent on this card, so a tile that
+   restarts at each one has no seam to show. */
+.evening .paper{
+  background:
+    /* held to a whisper: on paper there is no wash over it the way the
+       backdrop has one, so the opacity has to be in the ink itself */
+    linear-gradient(rgba(252,246,234,.88),rgba(250,240,223,.88)),
+    var(--jali) 0 0 / 96px 96px repeat,
+    linear-gradient(#FCF6EA,#F9EFDD);
+}
 .evening .art{background:linear-gradient(rgba(251,243,227,.3),rgba(251,243,227,.3))}
 .evening .deep .eyebrow,.evening .deep .verse{color:rgba(247,237,217,.76)}
 .evening .paper,.evening .deep,.evening .art{border-top-color:rgba(199,149,82,.34)}
@@ -649,6 +686,32 @@ html.js:not(.opened) .cue .rule{animation-play-state:paused}
 @keyframes wheelBack{
   from{transform:translate(-50%,-50%) rotate(0)}
   to{transform:translate(-50%,-50%) rotate(-360deg)}
+}
+
+/* ── date and time, one line, one size ─────────────────────────
+   `21.11.2026 | 7:00 PM`, set the way the Asansol design sets it. The
+   rule between them is the pipe. It wraps rather than shrinks on a
+   narrow screen — at four words of display type there is no size that
+   fits 360px and still reads as the loudest thing on the panel — and
+   the divider turns with it. */
+.stamp{
+  display:flex;align-items:center;justify-content:center;flex-wrap:wrap;
+  gap:clamp(.85rem,2.8vw,1.9rem);
+  margin:clamp(1.5rem,3.8vw,2.4rem) 0 0;
+}
+.stamp span{
+  font-family:var(--serif);font-weight:300;color:var(--gold);
+  font-size:clamp(2rem,7.4vw,4.5rem);line-height:1;letter-spacing:.03em;
+  white-space:nowrap;
+}
+.stamp .bar{
+  display:block;flex:none;width:1px;height:clamp(1.7rem,5.2vw,3.1rem);
+  background:linear-gradient(transparent,var(--gold),transparent);
+}
+@media (max-width:430px){
+  .stamp{gap:clamp(.5rem,2vw,.9rem)}
+  .stamp .bar{width:clamp(2.4rem,18vw,4rem);height:1px;
+    background:linear-gradient(90deg,transparent,var(--gold),transparent)}
 }
 
 /* half a gold wheel, coming up out of the foot of the date panel like

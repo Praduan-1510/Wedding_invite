@@ -107,8 +107,11 @@ export const events = {
     path: '/reception',
     eyebrow: 'Welcome to our Wedding Reception',
     date: '21.11.2026',
-    time: '6:00 PM',
-    startsAt: '2026-11-21T18:00:00+05:30',
+    /* the design reads 6:00 PM; Praduan moved the reception to seven on
+       2026-09-01. `startsAt` is what the countdown counts to and must move
+       with it. */
+    time: '7:00 PM',
+    startsAt: '2026-11-21T19:00:00+05:30',
     venue: {
       name: 'Mahal Banquet',
       lines: ['MXJ9+F43, Hutton Rd, Pathak Bari,', 'Asansol, West Bengal 713301'],

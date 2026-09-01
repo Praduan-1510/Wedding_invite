@@ -147,10 +147,25 @@ export default function Invitation({ event: v }: { event: WeddingEvent }) {
         {bengali && <i className="rising" aria-hidden="true" />}
         <div className="inner">
           <p className="verse" data-r>{c.verse}</p>
-          <p className="big-date" data-r style={i(1)}>{v.date}</p>
-          <p className="at" data-r style={i(2)}>
-            <i aria-hidden="true" /><span>{v.time}</span><i aria-hidden="true" />
-          </p>
+
+          {bengali ? (
+            /* date and time on one line at one size, divided by a rule —
+               which is how the Asansol design sets it: `21.11.2026 | 7:00 PM`.
+               The ceremony keeps its own lockup, a large date over a tracked
+               small-caps time, because that is the card already in circulation. */
+            <p className="stamp" data-r style={i(1)}>
+              <span>{v.date}</span>
+              <i className="bar" aria-hidden="true" />
+              <span>{v.time}</span>
+            </p>
+          ) : (
+            <>
+              <p className="big-date" data-r style={i(1)}>{v.date}</p>
+              <p className="at" data-r style={i(2)}>
+                <i aria-hidden="true" /><span>{v.time}</span><i aria-hidden="true" />
+              </p>
+            </>
+          )}
         </div>
       </section>
 
